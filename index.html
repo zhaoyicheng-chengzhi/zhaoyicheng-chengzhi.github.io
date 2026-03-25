@@ -3,325 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch 作品分享站 - 作者：赵一诚</title>
+    <title>Scratch作品分享站</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
-        body{background:#f5f7fa;color:#1d1d1f;transition:.3s}
-        .navbar{background:#000;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
-        .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600}
-        .logo img{width:32px;height:32px}
-        .nav-links{display:flex;gap:24px;align-items:center}
-        .nav-links a{color:#fff;text-decoration:none;font-size:15px;opacity:.9;cursor:pointer}
-        .nav-links a:hover{opacity:1}
-        .nav-links a.active{font-weight:600;border-bottom:2px solid #fff}
-        .theme-switcher{display:flex;gap:8px;margin-left:10px}
-        .theme-btn{width:20px;height:20px;border-radius:50%;border:none;cursor:pointer}
-        .theme-blue{background:#5e5ce6}
-        .theme-pink{background:#ff2d55}
-        .theme-green{background:#34c759}
-        .auth-btn{background:#5e5ce6;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer}
-        .auth-btn:hover{background:#4a48d1}
-        .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:60px 24px;border-radius:16px;text-align:center;margin-bottom:32px}
-        .hero h1{font-size:36px;margin-bottom:12px}
-        .hero p{font-size:18px;opacity:.9}
-        .container{max-width:1200px;margin:0 auto;padding:0 24px 40px}
-        .card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:24px}
-        .card h2{font-size:22px;margin-bottom:20px}
-        .form-group{margin-bottom:16px}
-        .form-group label{display:block;font-size:14px;color:#6e6e73;margin-bottom:6px}
-        .form-group input,.form-group select{width:100%;padding:12px 16px;border:1px solid #e5e5ea;border-radius:10px;font-size:16px}
-        .form-group input:focus{outline:none;border-color:#5e5ce6}
-        .btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:500;cursor:pointer;margin-top:6px}
-        .btn-primary{background:#5e5ce6;color:#fff}
-        .btn-primary:hover{background:#4a48d1}
-        .btn-success{background:#34c759;color:#fff}
-        .btn-success:hover{background:#2fbb53}
-        .btn-danger{background:#ff3b30;color:#fff}
-        .btn-danger:hover{background:#e03024}
-        .btn-warning{background:#ff9500;color:#fff}
-        .btn-outline{background:transparent;color:#5e5ce6;border:1px solid #5e5ce6}
-        .btn-outline:hover{background:#f5f5ff}
-        .hidden{display:none!important}
-        .user-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-        .user-info .name{font-size:18px;font-weight:500}
-        .dev-badge{background:#ff9500;color:#fff;padding:4px 10px;border-radius:12px;font-size:12px}
-        .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-        .project-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:transform .2s;cursor:pointer}
-        .project-card:hover{transform:translateY(-4px)}
-        .project-cover{height:160px;background:#e5e5ea;display:flex;align-items:center;justify-content:center;color:#86868b}
-        .project-info{padding:16px}
-        .project-title{font-size:16px;font-weight:500;margin-bottom:6px}
-        .project-meta{font-size:13px;color:#86868b}
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999}
-        .modal-content{background:#fff;border-radius:16px;width:90%;max-width:900px;padding:20px;position:relative}
-        .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer}
-        .scratch-iframe{width:100%;height:600px;border:none;border-radius:8px}
-        .footer{text-align:center;padding:20px;font-size:14px;color:#888;margin-top:20px}
-        .notice{background:#e0f0ff;color:#0066cc;padding:12px 16px;border-radius:10px;margin-bottom:20px}
-        .search{margin-bottom:20px}
-        .search input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd}
-        .comment-section{margin-top:15px;padding-top:15px;border-top:1px solid #eee}
-        .comment-list{max-height:200px;overflow-y:auto;margin-bottom:10px}
-        .comment-item{padding:8px 0;border-bottom:1px solid #f0f0f0}
-        .sign-in-card{text-align:center}
-        body.dark{background:#1c1c1e;color:#f5f5f7}
-        body.dark .card,body.dark .project-card{background:#2c2c2e}
-        body.theme-blue{background:linear-gradient(to bottom,#f0f8ff,#e6f7ff)}
-        body.theme-pink{background:linear-gradient(to bottom,#fff0f5,#fdf2f8)}
-        body.theme-green{background:linear-gradient(to bottom,#f0fff4,#e6fffa)}
-        .page{display:none}
-        .page.active{display:block}
+        *{margin:0;padding:0;box-sizing:border-box;font-family: "Microsoft YaHei",sans-serif}
+        /* 导航栏 - 全局固定，仅保留核心菜单 */
+        .navbar{
+            position: fixed;top:0;left:0;width:100%;
+            background:#000;color:#fff;
+            padding:15px 30px;
+            display:flex;justify-content:space-between;align-items:center;
+            z-index:999;
+        }
+        .nav-menu{display:flex;gap:25px;align-items:center;}
+        .nav-menu a{
+            color:#fff;text-decoration:none;
+            font-size:16px;cursor:pointer;
+            padding:5px 0;
+        }
+        .nav-menu a.active{border-bottom:2px solid #5e5ce6;}
+        .theme-box{display:flex;gap:8px;}
+        .theme{width:18px;height:18px;border-radius:50%;cursor:pointer;}
+        .theme.blue{background:#5e5ce6;}
+        .theme.pink{background:#ff2d55;}
+        .theme.green{background:#34c759;}
+        .login-btn{
+            background:#5e5ce6;color:#fff;
+            border:none;padding:8px 15px;
+            border-radius:6px;cursor:pointer;
+        }
+        /* 主内容区 - 适配固定导航栏 */
+        .container{
+            margin-top:70px;
+            padding:20px;
+            max-width:1200px;
+            margin-left:auto;margin-right:auto;
+        }
+        /* 页面模块 - 独立页面效果 */
+        .page{display:none;}
+        .page.active{display:block;}
+        /* 卡片样式 */
+        .card{
+            background:#fff;border-radius:12px;
+            padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom:20px;
+        }
+        .card h2{margin-bottom:15px;color:#333;}
+        /* 作品网格 */
+        .project-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+            gap:15px;
+        }
+        .project-item{
+            background:#fff;border-radius:10px;
+            overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+            cursor:pointer;transition:0.2s;
+        }
+        .project-item:hover{transform:translateY(-3px);}
+        .project-cover{
+            height:140px;background:#f0f0f0;
+            display:flex;align-items:center;justify-content:center;
+            font-size:20px;
+        }
+        .project-info{padding:12px;}
+        .project-title{font-size:15px;font-weight:bold;margin-bottom:5px;}
+        .project-desc{font-size:12px;color:#666;}
+        /* 按钮 */
+        .btn{
+            padding:10px;border:none;border-radius:6px;
+            cursor:pointer;margin-top:10px;
+            width:100%;
+        }
+        .btn-primary{background:#5e5ce6;color:#fff;}
+        .btn-success{background:#34c759;color:#fff;}
+        .btn-warning{background:#ff9500;color:#fff;}
+        /* 表单 */
+        .form-item{margin-bottom:15px;}
+        .form-item label{display:block;margin-bottom:5px;font-size:14px;}
+        .form-item input,.form-item select{
+            width:100%;padding:10px;
+            border:1px solid #ddd;border-radius:6px;
+        }
+        /* 弹窗 */
+        .modal{
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,0.7);display:none;
+            align-items:center;justify-content:center;z-index:1000;
+        }
+        .modal-content{
+            background:#fff;width:90%;max-width:800px;
+            padding:20px;border-radius:12px;
+            position:relative;
+        }
+        .close{
+            position:absolute;top:15px;right:15px;
+            font-size:20px;cursor:pointer;
+        }
+        .scratch-iframe{width:100%;height:500px;border:none;border-radius:8px;}
+        /* 工具类 */
+        .hidden{display:none!important;}
+        .error{color:red;font-size:12px;margin-top:5px;display:none;}
     </style>
 </head>
-<body class="theme-blue">
+<body>
 
+<!-- 固定顶部导航栏（全局唯一，无多余元素） -->
 <div class="navbar">
-    <div class="logo">
-        <img src="https://scratch.mit.edu/favicon.ico">Scratch 作品站 | 作者：赵一诚
-    </div>
-    <div class="nav-links">
-        <a id="nav-home" class="active" onclick="switchPage('home')">首页</a>
-        <a id="nav-community" onclick="switchPage('community')">作品社区</a>
-        <a id="nav-rank" onclick="switchPage('rank')">热度排行</a>
-        <a id="nav-about" onclick="switchPage('about')">关于本站</a>
-        <div class="theme-switcher">
-            <button class="theme-btn theme-blue" onclick="setTheme('theme-blue')"></button>
-            <button class="theme-btn theme-pink" onclick="setTheme('theme-pink')"></button>
-            <button class="theme-btn theme-green" onclick="setTheme('theme-green')"></button>
+    <div class="logo"><b>Scratch作品站</b></div>
+    <div class="nav-menu">
+        <a class="nav-link active" onclick="changePage('home')">首页</a>
+        <a class="nav-link" onclick="changePage('community')">作品社区</a>
+        <a class="nav-link" onclick="changePage('rank')">热度排行</a>
+        <a class="nav-link" onclick="changePage('about')">关于本站</a>
+        <div class="theme-box">
+            <div class="theme blue" onclick="setTheme('blue')"></div>
+            <div class="theme pink" onclick="setTheme('pink')"></div>
+            <div class="theme green" onclick="setTheme('green')"></div>
         </div>
     </div>
-    <button class="auth-btn" id="authToggle" onclick="toggleAuth()">登录/注册</button>
+    <button class="login-btn" id="loginBtn" onclick="showLogin()">登录/注册</button>
 </div>
 
-<div class="hero">
-    <h1>分享创意 · 运行作品 · 交流创作</h1>
-    <p>由赵一诚独立开发 | 安全、免费、开源</p>
-</div>
-
+<!-- 主内容容器 -->
 <div class="container">
-    <div class="notice" id="notice">公告：欢迎来到作品分享站，文明上传，禁止违规内容。</div>
-    <div class="search"><input type="text" id="search" placeholder="搜索作品名称..." oninput="renderAll()"></div>
 
-    <div class="card sign-in-card" id="signInCard">
-        <h2>每日签到</h2>
-        <button class="btn btn-success" onclick="signIn()">👋 今日签到</button>
-        <div class="tip" id="signInStatus"></div>
-    </div>
-
-    <div id="authCard" class="card hidden">
-        <h2>登录 / 注册</h2>
-        <div class="form-group"><label>用户名</label><input id="username"></div>
-        <div class="form-group"><label>密码</label><input type="password" id="pwd"></div>
-        <div class="form-group"><label>开发者邀请码</label><input id="code"></div>
-        <button class="btn btn-primary" onclick="login()">登录/注册</button>
-    </div>
-
-    <div id="userCard" class="card hidden">
-        <div class="user-info">
-            <div class="name">欢迎，<span id="who"></span></div>
-            <div id="devBadge" class="dev-badge hidden">开发者</div>
+    <!-- 1. 首页 -->
+    <div class="page active" id="page-home">
+        <div class="card">
+            <h2>🌟 首页推荐作品</h2>
+            <div class="project-grid" id="recommendList"></div>
         </div>
-        <button class="btn btn-outline" onclick="logout()">退出登录</button>
+        <div class="card">
+            <h2>🔥 最新上传作品</h2>
+            <div class="project-grid" id="newList"></div>
+        </div>
     </div>
 
-    <div id="uploadCard" class="card hidden">
-        <h2>📤 上传作品 (.sb3)</h2>
-        <div class="form-group"><label>选择文件</label><input type="file" id="file" accept=".sb3"></div>
-        <div class="form-group"><label>分类</label><select id="cate"><option>游戏</option><option>动画</option><option>工具</option><option>其他</option></select></div>
-        <div class="form-group"><label>访问密码（可选）</label><input id="pwdProtect" type="password"></div>
-        <button class="btn btn-success" onclick="upload()">上传发布</button>
+    <!-- 2. 作品社区（纯独立页面） -->
+    <div class="page" id="page-community">
+        <div class="card">
+            <h2>🎨 全部作品社区</h2>
+            <div class="project-grid" id="allList"></div>
+        </div>
     </div>
 
-    <div id="page-home" class="page active">
-        <div class="card"><h2>🌟 首页推荐作品（开发者精选）</h2><div class="projects-grid" id="recommendGrid"></div></div>
-        <div class="card"><h2>🔥 最新上传作品</h2><div class="projects-grid" id="list"></div></div>
+    <!-- 3. 热度排行（纯独立页面） -->
+    <div class="page" id="page-rank">
+        <div class="card">
+            <h2>📈 点赞热度排行</h2>
+            <div class="project-grid" id="hotList"></div>
+        </div>
     </div>
 
-    <div id="page-community" class="page">
-        <div class="card"><h2>🎨 作品社区 · 全部作品</h2><div class="projects-grid" id="communityList"></div></div>
-    </div>
-
-    <div id="page-rank" class="page">
-        <div class="card"><h2>📈 热度排行 · 点赞最多</h2><div class="projects-grid" id="rankList"></div></div>
-    </div>
-
-    <div id="page-about" class="page">
+    <!-- 4. 关于本站（纯独立页面） -->
+    <div class="page" id="page-about">
         <div class="card">
             <h2>ℹ️ 关于本站</h2>
-            <p>Scratch 作品分享站，由赵一诚独立开发。</p>
-            <p>功能：上传、预览、运行、评论、推荐 SB3 作品。</p>
-            <p>技术：HTML + CSS + JavaScript + TurboWarp 预览引擎。</p>
-            <p>宗旨：安全、免费、开源，分享创意，交流创作。</p>
+            <p>Scratch作品分享平台，支持上传、预览、点赞、推荐作品</p>
+            <p>开发者可设置首页推荐，管理作品</p>
         </div>
     </div>
+
+    <!-- 登录/注册卡片 -->
+    <div class="card hidden" id="loginCard">
+        <h2>登录 / 注册</h2>
+        <div class="form-item">
+            <label>用户名</label>
+            <input id="username">
+            <div class="error" id="nameErr">用户名不能为空</div>
+        </div>
+        <div class="form-item">
+            <label>密码</label>
+            <input type="password" id="password">
+            <div class="error" id="pwdErr">密码至少6位</div>
+        </div>
+        <div class="form-item">
+            <label>开发者邀请码（可选）</label>
+            <input id="inviteCode">
+        </div>
+        <button class="btn btn-primary" onclick="userLogin()">确认登录</button>
+    </div>
+
+    <!-- 上传作品卡片（仅开发者可见） -->
+    <div class="card hidden" id="uploadCard">
+        <h2>📤 上传Scratch作品</h2>
+        <div class="form-item">
+            <label>选择文件（.sb3）</label>
+            <input type="file" id="projectFile" accept=".sb3">
+        </div>
+        <div class="form-item">
+            <label>作品分类</label>
+            <select id="projectCate">
+                <option>游戏</option>
+                <option>动画</option>
+                <option>工具</option>
+                <option>其他</option>
+            </select>
+        </div>
+        <button class="btn btn-success" onclick="uploadProject()">上传发布</button>
+    </div>
+
 </div>
 
-<div class="footer">©2025 赵一诚 | 总访问 <span id="pv">0</span></div>
-
-<div class="modal hidden" id="runModal">
+<!-- 作品预览弹窗 -->
+<div class="modal" id="projectModal">
     <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="close" onclick="closeModal()">&times;</div>
         <h3 id="modalTitle"></h3>
         <iframe class="scratch-iframe" id="player"></iframe>
-        <div style="display:flex;gap:5px;margin-top:10px">
-            <button class="btn" onclick="likeProject()">❤️ 点赞</button>
-            <button class="btn" onclick="shareProject()">🔗 分享</button>
-            <button class="btn" onclick="downloadProject()">💾 下载</button>
-        </div>
-        <div class="comment-section hidden" id="commentSection">
-            <div class="comment-list" id="commentList"></div>
-            <input type="text" id="commentInput" placeholder="写评论...">
-            <button class="btn" onclick="postComment()">发布</button>
-        </div>
+        <button class="btn" onclick="likeProject()">❤️ 点赞</button>
+        <button class="btn" onclick="downloadProject()">💾 下载</button>
     </div>
 </div>
 
 <script>
+// 核心配置
 let user = null;
-const SECRET = "zhaoyichengzuishuai";
-let currentPage = "home";
+const INVITE_CODE = "zhaoyichengzuishuai";
+let currentProject = 0;
 
-window.onload = () => {
+// 初始化
+window.onload = function(){
     loadUser();
-    countPV();
-    renderAll();
-    checkSignIn();
-};
-
-function setTheme(c){document.body.className=c}
-function countPV(){localStorage.pv=+(localStorage.pv||0)+1;pv.innerText=localStorage.pv}
-
-// ✅ 新增：切换登录卡片显示/隐藏
-function toggleAuth() {
-    authCard.classList.toggle("hidden");
+    renderAllProjects();
 }
 
-function switchPage(page){
-    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-    document.getElementById(`page-${page}`).classList.add('active');
-    document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-    document.getElementById(`nav-${page}`).classList.add('active');
-    currentPage = page;
-    renderAll();
+// 1. 页面切换（真正独立页面效果）
+function changePage(pageName){
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // 激活目标页面
+    document.getElementById(`page-${pageName}`).classList.add('active');
+    // 导航高亮
+    document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+    event.target.classList.add('active');
 }
 
-function login(){
-    let u=username.value.trim(),p=pwd.value.trim(),c=code.value.trim();
-    if(!u||!p)return alert("请输入账号密码");
-    user={name:u,dev:c===SECRET};
-    localStorage.scratchUser=JSON.stringify(user);
-    alert("登录成功");
-    authCard.classList.add("hidden");
-    authToggle.classList.add("hidden");
-    loadUser();
+// 2. 主题切换
+function setTheme(color){
+    document.querySelector('.login-btn').style.background = 
+    color=='blue'?'#5e5ce6':color=='pink'?'#ff2d55':'#34c759';
 }
 
-function logout(){
-    user=null;
-    localStorage.removeItem("scratchUser");
-    authToggle.classList.remove("hidden");
+// 3. 登录/注册相关
+function showLogin(){
+    document.getElementById('loginCard').classList.toggle('hidden');
+}
+
+function clearErrors(){
+    document.getElementById('nameErr').style.display = 'none';
+    document.getElementById('pwdErr').style.display = 'none';
+}
+
+function userLogin(){
+    clearErrors();
+    let name = document.getElementById('username').value.trim();
+    let pwd = document.getElementById('password').value.trim();
+    let code = document.getElementById('inviteCode').value.trim();
+    let err = false;
+
+    if(!name){document.getElementById('nameErr').style.display='block';err=true;}
+    if(pwd.length<6){document.getElementById('pwdErr').style.display='block';err=true;}
+    if(err)return;
+
+    // 登录成功
+    user = {
+        name:name,
+        isDev: code === INVITE_CODE
+    };
+    localStorage.user = JSON.stringify(user);
+    alert('登录成功！');
     loadUser();
 }
 
 function loadUser(){
-    user=JSON.parse(localStorage.scratchUser||"null");
+    user = JSON.parse(localStorage.user || null);
     if(user){
-        userCard.classList.remove("hidden");
-        authCard.classList.add("hidden");
-        authToggle.classList.add("hidden");
-        who.innerText=user.name;
-        devBadge.classList.toggle("hidden",!user.dev);
-        uploadCard.classList.toggle("hidden",!user.dev);
+        document.getElementById('loginBtn').classList.add('hidden');
+        document.getElementById('loginCard').classList.add('hidden');
+        if(user.isDev) document.getElementById('uploadCard').classList.remove('hidden');
     }else{
-        userCard.classList.add("hidden");
-        uploadCard.classList.add("hidden");
-        authToggle.classList.remove("hidden");
+        document.getElementById('loginBtn').classList.remove('hidden');
+        document.getElementById('uploadCard').classList.add('hidden');
     }
-    renderAll();
+    renderAllProjects();
 }
 
-function upload(){
-    let f=file.files[0];if(!f)return alert("请选择文件");
-    let r=new FileReader();
-    r.onload=e=>{
-        let list=JSON.parse(localStorage.projects||"[]");
-        list.unshift({
-            name:f.name.replace(".sb3",""),author:user.name,
-            data:e.target.result,time:new Date().toLocaleString(),
-            likes:0,views:0,rec:false,cmt:[]
+// 4. 作品上传（修复：上传立即显示）
+function uploadProject(){
+    let file = document.getElementById('projectFile').files[0];
+    if(!file){alert('请选择文件');return;}
+    if(!file.name.endsWith('.sb3')){alert('仅支持sb3格式');return;}
+
+    let reader = new FileReader();
+    reader.onload = function(e){
+        let projects = JSON.parse(localStorage.projects || '[]');
+        projects.unshift({
+            name: file.name.replace('.sb3',''),
+            author: user.name,
+            cate: document.getElementById('projectCate').value,
+            url: e.target.result,
+            likes:0,
+            recommend:false,
+            time: new Date().toLocaleString()
         });
-        localStorage.projects=JSON.stringify(list);
-        alert("上传成功");
-        renderAll();
-    };
-    r.readAsDataURL(f);
+        localStorage.projects = JSON.stringify(projects);
+        alert('上传成功！');
+        renderAllProjects();
+    }
+    reader.readAsDataURL(file);
 }
 
-function renderAll(){
-    let list=JSON.parse(localStorage.projects||"[]");
-    let keyword = search.value.toLowerCase();
-    let filtered = list.filter(p => p.name.toLowerCase().includes(keyword));
+// 5. 渲染所有作品（修复核心BUG）
+function renderAllProjects(){
+    let projects = JSON.parse(localStorage.projects || '[]');
+    
+    // 推荐作品
+    renderList(projects.filter(p=>p.recommend), 'recommendList');
+    // 最新作品
+    renderList(projects, 'newList');
+    // 全部作品
+    renderList(projects, 'allList');
+    // 热度排行
+    renderList([...projects].sort((a,b)=>b.likes-a.likes), 'hotList');
+}
 
-    recommendGrid.innerHTML="";
-    filtered.filter(p=>p.rec).forEach((p,i)=>{
-        let d=document.createElement("div");
-        d.className="project-card";
-        d.innerHTML=`<div class="project-cover">⭐</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author}</div></div>`;
-        d.onclick=()=>open(i);
-        recommendGrid.appendChild(d);
-    });
-
-    listEl.innerHTML="";
-    filtered.forEach((p,i)=>{
-        let d=document.createElement("div");
-        d.className="project-card";
-        d.innerHTML=`<div class="project-cover">🎮</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | ${p.time}</div>${user?.dev?`<button class="btn btn-warning" onclick="setRec(${i})">${p.rec?"取消推荐":"设为首页"}</button>`:""}</div>`;
-        d.onclick=e=>!e.target.closest(".btn")&&open(i);
-        listEl.appendChild(d);
-    });
-
-    communityList.innerHTML="";
-    filtered.forEach((p,i)=>{
-        let d=document.createElement("div");
-        d.className="project-card";
-        d.innerHTML=`<div class="project-cover">🎨</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | 👍${p.likes}</div></div>`;
-        d.onclick=()=>open(i);
-        communityList.appendChild(d);
-    });
-
-    rankList.innerHTML="";
-    [...filtered].sort((a,b)=>b.likes-a.likes).forEach((p,i)=>{
-        let d=document.createElement("div");
-        d.className="project-card";
-        d.innerHTML=`<div class="project-cover">📈</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | 👍${p.likes}</div></div>`;
-        d.onclick=()=>open(i);
-        rankList.appendChild(d);
+function renderList(list, domId){
+    let box = document.getElementById(domId);
+    box.innerHTML = '';
+    list.forEach((item,index)=>{
+        let div = document.createElement('div');
+        div.className = 'project-item';
+        div.innerHTML = `
+            <div class="project-cover">🎮</div>
+            <div class="project-info">
+                <div class="project-title">${item.name}</div>
+                <div class="project-desc">${item.author} | 👍${item.likes}</div>
+                ${user?.isDev ? `<button class="btn btn-warning" onclick="setRecommend(${index})">${item.recommend?'取消推荐':'设为首页'}</button>`:''}
+            </div>
+        `;
+        div.onclick = ()=>openProject(index);
+        box.appendChild(div);
     });
 }
 
-function setRec(i){
-    let p=JSON.parse(localStorage.projects);p[i].rec=!p[i].rec;localStorage.projects=JSON.stringify(p);renderAll();
+// 6. 作品推荐设置
+function setRecommend(index){
+    let projects = JSON.parse(localStorage.projects);
+    projects[index].recommend = !projects[index].recommend;
+    localStorage.projects = JSON.stringify(projects);
+    renderAllProjects();
 }
 
-let cur;
-function open(i){
-    cur=i;runModal.classList.remove("hidden");
-    let p=JSON.parse(localStorage.projects)[i];
-    modalTitle.innerText=p.name;
-    fetch(p.data).then(r=>r.blob()).then(b=>{
-        let f=new FormData();f.append("file",b,"p.sb3");
-        return fetch("https://projects.turbowarp.org/",{method:"POST",body:f});
-    }).then(r=>r.text()).then(id=>{player.src=`https://turbowarp.org/${id}`});
+// 7. 作品预览/点赞/下载
+function openProject(index){
+    currentProject = index;
+    let projects = JSON.parse(localStorage.projects);
+    let project = projects[index];
+    document.getElementById('modalTitle').innerText = project.name;
+    document.getElementById('projectModal').style.display = 'flex';
+    
+    // 加载作品
+    fetch(project.url).then(res=>res.blob()).then(blob=>{
+        let form = new FormData();
+        form.append('file', blob, 'project.sb3');
+        return fetch('https://projects.turbowarp.org/',{method:'POST',body:form});
+    }).then(res=>res.text()).then(id=>{
+        document.getElementById('player').src = `https://turbowarp.org/${id}`;
+    });
 }
 
-function closeModal(){runModal.classList.add("hidden");player.src=""}
-function likeProject(){let p=JSON.parse(localStorage.projects);p[cur].likes++;localStorage.projects=JSON.stringify(p);alert("点赞成功");renderAll()}
-function shareProject(){alert("分享链接："+location.href)}
-function downloadProject(){let a=document.createElement("a");a.href=JSON.parse(localStorage.projects)[cur].data;a.download="project.sb3";a.click()}
-function postComment(){if(!user)return alert("请先登录");let t=commentInput.value.trim();if(!t)return;let p=JSON.parse(localStorage.projects);p[cur].cmt.push({u:user.name,t});localStorage.projects=JSON.stringify(p);commentInput.value="";renderComment()}
-function renderComment(){let c=JSON.parse(localStorage.projects)[cur].cmt;commentList.innerHTML=c.map(i=>`<div class="comment-item"><div class="comment-author">${i.u}</div><div class="comment-text">${i.t}</div></div>`).join("")}
-function signIn(){if(!user)return alert("请登录");let d=new Date().toLocaleDateString();if(localStorage.lastSignIn==d)return alert("今日已签到");localStorage.lastSignIn=d;alert("签到成功！");checkSignIn()}
-function checkSignIn(){if(localStorage.lastSignIn==new Date().toLocaleDateString())signInStatus.innerText="✅ 今日已签到"}
+function closeModal(){
+    document.getElementById('projectModal').style.display = 'none';
+    document.getElementById('player').src = '';
+}
+
+function likeProject(){
+    let projects = JSON.parse(localStorage.projects);
+    projects[currentProject].likes++;
+    localStorage.projects = JSON.stringify(projects);
+    alert('点赞成功！');
+    renderAllProjects();
+}
+
+function downloadProject(){
+    let projects = JSON.parse(localStorage.projects);
+    let a = document.createElement('a');
+    a.href = projects[currentProject].url;
+    a.download = projects[currentProject].name+'.sb3';
+    a.click();
+}
 </script>
 </body>
 </html>
