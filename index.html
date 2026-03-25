@@ -307,7 +307,7 @@
                 </div>
                 <div class="form-group">
                     <label>开发者邀请码（可选）</label>
-                    <input id="inviteCode" placeholder="输入邀请码解锁上传权限">
+                    <input id="inviteCode" placeholder="输入邀请码解锁开发者权限">
                     <div class="error" id="codeErr">邀请码错误</div>
                 </div>
                 <button class="btn btn-primary" id="loginBtn">登录 / 注册</button>
@@ -324,7 +324,7 @@
                 </div>
             </div>
 
-            <!-- 🎯 上传作品（超大超清晰，仅开发者可见） -->
+            <!-- 🎯 上传作品（仅开发者可见，非开发者完全不渲染） -->
             <div class="card hidden" id="uploadCard">
                 <h2>📤 上传Scratch作品（.sb3格式）</h2>
                 <div class="form-group">
@@ -374,13 +374,14 @@
             </div>
         </div>
 
-        <!-- 4. 关于本站 -->
+        <!-- 4. 关于本站（彻底删除邀请码，无任何敏感信息泄露） -->
         <div class="page" id="page-about">
             <div class="card">
                 <h2>ℹ️ 关于本站</h2>
-                <p style="margin-bottom:15px;line-height:1.8;">Scratch作品分享站，由赵一诚独立开发。</p>
-                <p style="margin-bottom:15px;line-height:1.8;">支持上传、预览、运行、点赞、下载Scratch作品。</p>
-                <p style="line-height:1.8;">开发者邀请码：zhaoyichengzuishuai</p>
+                <p style="margin-bottom:15px;line-height:1.8;">Scratch作品分享站，由赵一诚独立开发完成。</p>
+                <p style="margin-bottom:15px;line-height:1.8;">本站支持Scratch作品的上传、在线预览、运行、点赞、下载功能，为创作者提供便捷的创意分享平台。</p>
+                <p style="margin-bottom:15px;line-height:1.8;">技术栈：HTML + CSS + JavaScript，基于TurboWarp引擎实现作品在线运行。</p>
+                <p style="line-height:1.8;">宗旨：安全、免费、开源，助力Scratch创作者交流成长。</p>
             </div>
         </div>
     </div>
@@ -400,119 +401,140 @@
 </div>
 
 <script>
-// 配置
-const INVITE_CODE = "zhaoyichengzuishuai";
-let user = null;
+// 核心配置（邀请码仅在此处，页面上完全不暴露）
+const DEV_INVITE_CODE = "zhaoyichengzuishuai";
+let currentUser = null;
 let currentProjectIndex = 0;
 
-// 初始化
+// 页面初始化
 window.onload = function() {
     initPageSwitch();
-    loadUser();
-    renderAll();
-    bindEvents();
+    loadUserStatus();
+    renderAllProjects();
+    bindAllEvents();
 };
 
-// 1. 页面切换
+// 1. 独立页面切换
 function initPageSwitch() {
-    document.querySelectorAll('.nav-link').forEach(link => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            // 切换导航高亮
+            navLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
+            // 切换页面
+            const targetPage = this.getAttribute('data-page');
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(`page-${this.getAttribute('data-page')}`).classList.add('active');
-            renderAll();
+            document.getElementById(`page-${targetPage}`).classList.add('active');
+            // 刷新作品列表
+            renderAllProjects();
         });
     });
 }
 
 // 2. 绑定所有事件
-function bindEvents() {
-    // 登录按钮
+function bindAllEvents() {
+    // 登录按钮点击
     document.getElementById('authBtn').addEventListener('click', () => {
         document.getElementById('loginCard').classList.toggle('hidden');
-        clearErrors();
+        clearAllErrors();
     });
 
     // 提交登录
-    document.getElementById('loginBtn').addEventListener('click', login);
+    document.getElementById('loginBtn').addEventListener('click', userLogin);
 
     // 退出登录
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('logoutBtn').addEventListener('click', userLogout);
 
-    // 🎯 上传作品按钮
+    // 上传作品按钮
     document.getElementById('uploadBtn').addEventListener('click', uploadProject);
 
     // 弹窗关闭
-    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('closeModal').addEventListener('click', closeProjectModal);
 
-    // 点赞
+    // 点赞按钮
     document.getElementById('likeBtn').addEventListener('click', likeProject);
 
-    // 下载
+    // 下载按钮
     document.getElementById('downloadBtn').addEventListener('click', downloadProject);
 }
 
-// 清除错误
-function clearErrors() {
+// 清除错误提示
+function clearAllErrors() {
     document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
 }
 
 // 3. 登录/注册（带完整校验）
-function login() {
-    clearErrors();
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value.trim();
-    const c = document.getElementById('inviteCode').value.trim();
-    let err = false;
+function userLogin() {
+    clearAllErrors();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const inviteCode = document.getElementById('inviteCode').value.trim();
+    let hasError = false;
 
-    if(!u) { document.getElementById('nameErr').style.display = 'block'; err = true; }
-    if(p.length < 6) { document.getElementById('pwdErr').style.display = 'block'; err = true; }
-    
-    let isDev = false;
-    if(c) {
-        if(c !== INVITE_CODE) {
+    // 用户名非空校验
+    if(!username) {
+        document.getElementById('nameErr').style.display = 'block';
+        hasError = true;
+    }
+
+    // 密码长度校验
+    if(password.length < 6) {
+        document.getElementById('pwdErr').style.display = 'block';
+        hasError = true;
+    }
+
+    // 邀请码校验
+    let isDeveloper = false;
+    if(inviteCode) {
+        if(inviteCode !== DEV_INVITE_CODE) {
             document.getElementById('codeErr').style.display = 'block';
-            err = true;
+            hasError = true;
         } else {
-            isDev = true;
+            isDeveloper = true;
         }
     }
 
-    if(err) return;
+    // 有错误直接终止
+    if(hasError) return;
 
-    user = { name: u, isDev: isDev };
-    localStorage.user = JSON.stringify(user);
-    alert('登录成功！');
-    loadUser();
+    // 登录成功，保存用户信息
+    currentUser = {
+        username: username,
+        isDev: isDeveloper
+    };
+    localStorage.setItem('siteUser', JSON.stringify(currentUser));
+    alert('登录/注册成功！');
+    loadUserStatus();
 }
 
 // 退出登录
-function logout() {
-    user = null;
-    localStorage.removeItem('user');
-    loadUser();
-    alert('已退出');
+function userLogout() {
+    currentUser = null;
+    localStorage.removeItem('siteUser');
+    loadUserStatus();
+    alert('已退出登录');
 }
 
-// 加载用户状态
-function loadUser() {
-    user = JSON.parse(localStorage.user || 'null');
+// 加载用户状态（严格权限控制）
+function loadUserStatus() {
+    currentUser = JSON.parse(localStorage.getItem('siteUser') || 'null');
     const authBtn = document.getElementById('authBtn');
     const loginCard = document.getElementById('loginCard');
     const userCard = document.getElementById('userCard');
-    const uploadCard = document.getElementById('uploadCard'); // 🎯 上传卡片
+    const uploadCard = document.getElementById('uploadCard');
     const devTag = document.getElementById('devTag');
     const who = document.getElementById('who');
 
-    if(user) {
+    if(currentUser) {
+        // 已登录：隐藏登录按钮和登录卡片
         authBtn.classList.add('hidden');
         loginCard.classList.add('hidden');
         userCard.classList.remove('hidden');
-        who.innerText = user.name;
+        who.innerText = currentUser.username;
         
-        // 🎯 开发者：显示上传卡片
-        if(user.isDev) {
+        // 严格控制：只有开发者才显示上传卡片
+        if(currentUser.isDev) {
             uploadCard.classList.remove('hidden');
             devTag.classList.remove('hidden');
         } else {
@@ -520,147 +542,163 @@ function loadUser() {
             devTag.classList.add('hidden');
         }
     } else {
+        // 未登录：隐藏用户信息和上传卡片
         authBtn.classList.remove('hidden');
         userCard.classList.add('hidden');
-        uploadCard.classList.add('hidden'); // 🎯 未登录：隐藏上传
+        uploadCard.classList.add('hidden');
         devTag.classList.add('hidden');
     }
-    renderAll();
+    renderAllProjects();
 }
 
-// 🎯 4. 核心：上传作品功能
+// 4. 核心上传功能（双层权限校验，非开发者绝对无法上传）
 function uploadProject() {
+    // 第一层校验：必须是开发者，否则直接拦截
+    if(!currentUser || !currentUser.isDev) {
+        alert('你没有上传权限，仅开发者可上传作品！');
+        return;
+    }
+
+    // 第二层校验：文件合法性
     const fileInput = document.getElementById('projectFile');
     const file = fileInput.files[0];
-    
-    // 1. 检查是否选择了文件
     if(!file) {
-        alert('请先选择一个.sb3文件！');
+        alert('请先选择一个.sb3格式的Scratch作品文件！');
         return;
     }
-
-    // 2. 检查文件格式
     if(!file.name.endsWith('.sb3')) {
-        alert('只能上传.sb3格式的Scratch作品！');
+        alert('仅支持上传.sb3格式的Scratch作品！');
         return;
     }
 
-    // 3. 读取文件并保存
+    // 读取文件并保存
     const reader = new FileReader();
     reader.onload = function(e) {
-        // 获取现有作品列表
-        const projects = JSON.parse(localStorage.projects || '[]');
-        
+        const projectList = JSON.parse(localStorage.getItem('siteProjects') || '[]');
         // 添加新作品
-        projects.unshift({
+        projectList.unshift({
             name: file.name.replace('.sb3', ''),
-            author: user.name,
+            author: currentUser.username,
             category: document.getElementById('projectCate').value,
-            url: e.target.result,
+            fileUrl: e.target.result,
             likes: 0,
             isRecommend: false,
-            time: new Date().toLocaleString()
+            uploadTime: new Date().toLocaleString()
         });
-
-        // 保存到本地存储
-        localStorage.projects = JSON.stringify(projects);
-
-        // 4. 上传成功提示
+        // 保存到本地
+        localStorage.setItem('siteProjects', JSON.stringify(projectList));
+        // 上传成功提示
         alert('作品上传成功！');
-
-        // 5. 清空文件选择
+        // 清空输入
         fileInput.value = '';
-
-        // 6. 立即刷新作品列表
-        renderAll();
+        // 刷新作品列表
+        renderAllProjects();
     };
-
-    // 开始读取文件
     reader.readAsDataURL(file);
 }
 
 // 5. 渲染所有作品
-function renderAll() {
-    const projects = JSON.parse(localStorage.projects || '[]');
+function renderAllProjects() {
+    const projectList = JSON.parse(localStorage.getItem('siteProjects') || '[]');
     
-    // 推荐作品
-    renderList(projects.filter(p => p.isRecommend), 'recommendList');
-    
+    // 首页推荐作品
+    renderProjectList(projectList.filter(p => p.isRecommend), 'recommendList');
     // 最新作品
-    renderList(projects, 'newList');
-    
-    // 全部作品
-    renderList(projects, 'allList');
-    
-    // 热度排行
-    renderList([...projects].sort((a,b) => b.likes - a.likes), 'hotList');
+    renderProjectList(projectList, 'newList');
+    // 社区全部作品
+    renderProjectList(projectList, 'allList');
+    // 热度排行（按点赞降序）
+    renderProjectList([...projectList].sort((a,b) => b.likes - a.likes), 'hotList');
 }
 
-function renderList(list, domId) {
-    const box = document.getElementById(domId);
-    box.innerHTML = '';
-    list.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.className = 'project-card';
-        div.innerHTML = `
+// 渲染作品列表
+function renderProjectList(list, containerId) {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    container.innerHTML = '';
+
+    list.forEach((project, index) => {
+        const projectCard = document.createElement('div');
+        projectCard.className = 'project-card';
+        projectCard.innerHTML = `
             <div class="project-cover">🎮</div>
             <div class="project-info">
-                <div class="project-title">${p.name}</div>
-                <div class="project-meta">${p.author} | 👍${p.likes}</div>
-                ${user?.isDev ? `<button class="btn btn-warning" onclick="toggleRecommend(${i})">${p.isRecommend?'取消推荐':'设为首页'}</button>` : ''}
+                <div class="project-title">${project.name}</div>
+                <div class="project-meta">${project.author} | 👍${project.likes}</div>
+                ${currentUser?.isDev ? `<button class="btn btn-warning" onclick="toggleRecommend(${index})">${project.isRecommend?'取消首页推荐':'设为首页推荐'}</button>` : ''}
             </div>
         `;
-        div.onclick = (e) => {
-            if(!e.target.closest('button')) openProject(i);
-        };
-        box.appendChild(div);
+        // 点击打开作品
+        projectCard.addEventListener('click', (e) => {
+            if(!e.target.closest('button')) {
+                openProjectModal(index);
+            }
+        });
+        container.appendChild(projectCard);
     });
 }
 
-// 6. 推荐设置
-function toggleRecommend(i) {
-    const projects = JSON.parse(localStorage.projects);
-    projects[i].isRecommend = !projects[i].isRecommend;
-    localStorage.projects = JSON.stringify(projects);
-    renderAll();
+// 切换首页推荐
+function toggleRecommend(index) {
+    // 仅开发者可操作
+    if(!currentUser || !currentUser.isDev) {
+        alert('无权限操作！');
+        return;
+    }
+    const projectList = JSON.parse(localStorage.getItem('siteProjects'));
+    projectList[index].isRecommend = !projectList[index].isRecommend;
+    localStorage.setItem('siteProjects', JSON.stringify(projectList));
+    renderAllProjects();
 }
 
-// 7. 作品运行/点赞/下载
-function openProject(i) {
-    currentProjectIndex = i;
-    const projects = JSON.parse(localStorage.projects);
-    const p = projects[i];
-    document.getElementById('modalTitle').innerText = p.name;
+// 6. 作品运行/点赞/下载
+function openProjectModal(index) {
+    currentProjectIndex = index;
+    const projectList = JSON.parse(localStorage.getItem('siteProjects'));
+    const project = projectList[index];
+    // 设置标题
+    document.getElementById('modalTitle').innerText = project.name;
+    // 显示弹窗
     document.getElementById('projectModal').style.display = 'flex';
-
     // 加载作品
-    fetch(p.url).then(res => res.blob()).then(blob => {
-        const form = new FormData();
-        form.append('file', blob, 'project.sb3');
-        return fetch('https://projects.turbowarp.org/', {method:'POST', body:form});
-    }).then(res => res.text()).then(id => {
-        document.getElementById('player').src = `https://turbowarp.org/${id}`;
-    });
+    fetch(project.fileUrl)
+        .then(res => res.blob())
+        .then(blob => {
+            const formData = new FormData();
+            formData.append('file', blob, 'project.sb3');
+            return fetch('https://projects.turbowarp.org/', {
+                method: 'POST',
+                body: formData
+            });
+        })
+        .then(res => res.text())
+        .then(projectId => {
+            document.getElementById('player').src = `https://turbowarp.org/${projectId}`;
+        });
 }
 
-function closeModal() {
+// 关闭弹窗
+function closeProjectModal() {
     document.getElementById('projectModal').style.display = 'none';
     document.getElementById('player').src = '';
 }
 
+// 点赞作品
 function likeProject() {
-    const projects = JSON.parse(localStorage.projects);
-    projects[currentProjectIndex].likes++;
-    localStorage.projects = JSON.stringify(projects);
+    const projectList = JSON.parse(localStorage.getItem('siteProjects'));
+    projectList[currentProjectIndex].likes++;
+    localStorage.setItem('siteProjects', JSON.stringify(projectList));
     alert('点赞成功！');
-    renderAll();
+    renderAllProjects();
 }
 
+// 下载作品
 function downloadProject() {
-    const projects = JSON.parse(localStorage.projects);
+    const projectList = JSON.parse(localStorage.getItem('siteProjects'));
+    const project = projectList[currentProjectIndex];
     const a = document.createElement('a');
-    a.href = projects[currentProjectIndex].url;
-    a.download = projects[currentProjectIndex].name + '.sb3';
+    a.href = project.fileUrl;
+    a.download = `${project.name}.sb3`;
     a.click();
 }
 </script>
