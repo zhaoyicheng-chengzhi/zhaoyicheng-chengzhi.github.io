@@ -13,6 +13,7 @@
         .nav-links{display:flex;gap:24px;align-items:center}
         .nav-links a{color:#fff;text-decoration:none;font-size:15px;opacity:.9;cursor:pointer}
         .nav-links a:hover{opacity:1}
+        .nav-links a.active{font-weight:600;border-bottom:2px solid #fff}
         .theme-switcher{display:flex;gap:8px;margin-left:10px}
         .theme-btn{width:20px;height:20px;border-radius:50%;border:none;cursor:pointer}
         .theme-blue{background:#5e5ce6}
@@ -68,6 +69,9 @@
         body.theme-blue{background:linear-gradient(to bottom,#f0f8ff,#e6f7ff)}
         body.theme-pink{background:linear-gradient(to bottom,#fff0f5,#fdf2f8)}
         body.theme-green{background:linear-gradient(to bottom,#f0fff4,#e6fffa)}
+        /* 页面区块默认隐藏，切换时显示 */
+        .page{display:none}
+        .page.active{display:block}
     </style>
 </head>
 <body class="theme-blue">
@@ -77,10 +81,10 @@
         <img src="https://scratch.mit.edu/favicon.ico">Scratch 作品站 | 作者：赵一诚
     </div>
     <div class="nav-links">
-        <a onclick="showHome()">首页</a>
-        <a onclick="showCommunity()">作品社区</a>
-        <a onclick="showRanking()">热度排行</a>
-        <a onclick="showAbout()">关于本站</a>
+        <a id="nav-home" class="active" onclick="switchPage('home')">首页</a>
+        <a id="nav-community" onclick="switchPage('community')">作品社区</a>
+        <a id="nav-rank" onclick="switchPage('rank')">热度排行</a>
+        <a id="nav-about" onclick="switchPage('about')">关于本站</a>
         <div class="theme-switcher">
             <button class="theme-btn theme-blue" onclick="setTheme('theme-blue')"></button>
             <button class="theme-btn theme-pink" onclick="setTheme('theme-pink')"></button>
@@ -99,12 +103,14 @@
     <div class="notice" id="notice">公告：欢迎来到作品分享站，文明上传，禁止违规内容。</div>
     <div class="search"><input type="text" id="search" placeholder="搜索作品名称..." oninput="renderAll()"></div>
 
+    <!-- 签到卡片 -->
     <div class="card sign-in-card" id="signInCard">
         <h2>每日签到</h2>
         <button class="btn btn-success" onclick="signIn()">👋 今日签到</button>
         <div class="tip" id="signInStatus"></div>
     </div>
 
+    <!-- 登录注册卡片 -->
     <div id="authCard" class="card hidden">
         <h2>登录 / 注册</h2>
         <div class="form-group"><label>用户名</label><input id="username"></div>
@@ -113,6 +119,7 @@
         <button class="btn btn-primary" onclick="login()">登录/注册</button>
     </div>
 
+    <!-- 用户信息卡片 -->
     <div id="userCard" class="card hidden">
         <div class="user-info">
             <div class="name">欢迎，<span id="who"></span></div>
@@ -121,6 +128,7 @@
         <button class="btn btn-outline" onclick="logout()">退出登录</button>
     </div>
 
+    <!-- 上传卡片 -->
     <div id="uploadCard" class="card hidden">
         <h2>📤 上传作品 (.sb3)</h2>
         <div class="form-group"><label>选择文件</label><input type="file" id="file" accept=".sb3"></div>
@@ -129,12 +137,38 @@
         <button class="btn btn-success" onclick="upload()">上传发布</button>
     </div>
 
-    <div class="card"><h2>🌟 首页推荐</h2><div class="projects-grid" id="recommendGrid"></div></div>
-    <div class="card"><h2>🔥 最新作品</h2><div class="projects-grid" id="list"></div></div>
+    <!-- 👇 4个页面区块：首页、社区、排行、关于 -->
+    <!-- 1. 首页 -->
+    <div id="page-home" class="page active">
+        <div class="card"><h2>🌟 首页推荐作品（开发者精选）</h2><div class="projects-grid" id="recommendGrid"></div></div>
+        <div class="card"><h2>🔥 最新上传作品</h2><div class="projects-grid" id="list"></div></div>
+    </div>
+
+    <!-- 2. 作品社区 -->
+    <div id="page-community" class="page">
+        <div class="card"><h2>🎨 作品社区 · 全部作品</h2><div class="projects-grid" id="communityList"></div></div>
+    </div>
+
+    <!-- 3. 热度排行 -->
+    <div id="page-rank" class="page">
+        <div class="card"><h2>📈 热度排行 · 点赞最多</h2><div class="projects-grid" id="rankList"></div></div>
+    </div>
+
+    <!-- 4. 关于本站 -->
+    <div id="page-about" class="page">
+        <div class="card">
+            <h2>ℹ️ 关于本站</h2>
+            <p>Scratch 作品分享站，由赵一诚独立开发。</p>
+            <p>功能：上传、预览、运行、评论、推荐 SB3 作品。</p>
+            <p>技术：HTML + CSS + JavaScript + TurboWarp 预览引擎。</p>
+            <p>宗旨：安全、免费、开源，分享创意，交流创作。</p>
+        </div>
+    </div>
 </div>
 
 <div class="footer">©2025 赵一诚 | 总访问 <span id="pv">0</span></div>
 
+<!-- 运行弹窗 -->
 <div class="modal hidden" id="runModal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal()">×</button>
@@ -156,6 +190,7 @@
 <script>
 let user = null;
 const SECRET = "zhaoyichengzuishuai";
+let currentPage = "home";
 
 window.onload = () => {
     loadUser();
@@ -164,14 +199,27 @@ window.onload = () => {
     checkSignIn();
 };
 
+// 主题切换
 function setTheme(c){document.body.className=c}
-function countPV(){localStorage.pv=+(localStorage.pv||0)+1;pv.innerText=localStorage.pv}
-function showHome(){alert("🏠 首页")}
-function showCommunity(){alert("🎨 社区")}
-function showRanking(){alert("📈 排行")}
-function showAbout(){alert("Scratch 作品站\n作者：赵一诚")}
 
-// ✅ 修复：登录后右上角按钮彻底消失
+// PV统计
+function countPV(){localStorage.pv=+(localStorage.pv||0)+1;pv.innerText=localStorage.pv}
+
+// ✅ 页面切换核心函数
+function switchPage(page){
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    // 显示目标页面
+    document.getElementById(`page-${page}`).classList.add('active');
+    // 导航高亮
+    document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+    document.getElementById(`nav-${page}`).classList.add('active');
+    currentPage = page;
+    // 切换后重新渲染作品列表
+    renderAll();
+}
+
+// 登录成功后隐藏登录按钮
 function login(){
     let u=username.value.trim(),p=pwd.value.trim(),c=code.value.trim();
     if(!u||!p)return alert("请输入账号密码");
@@ -179,25 +227,25 @@ function login(){
     localStorage.scratchUser=JSON.stringify(user);
     alert("登录成功");
     authCard.classList.add("hidden");
-    authToggle.classList.add("hidden"); // 👌 登录后隐藏登录按钮
+    authToggle.classList.add("hidden");
     loadUser();
 }
 
-// ✅ 修复：退出登录后重新显示登录按钮
+// 退出登录后显示登录按钮
 function logout(){
     user=null;
     localStorage.removeItem("scratchUser");
-    authToggle.classList.remove("hidden"); // 👌 退出后恢复按钮
+    authToggle.classList.remove("hidden");
     loadUser();
 }
 
-// ✅ 页面刷新时自动判断是否隐藏按钮
+// 加载用户状态
 function loadUser(){
     user=JSON.parse(localStorage.scratchUser||"null");
     if(user){
         userCard.classList.remove("hidden");
         authCard.classList.add("hidden");
-        authToggle.classList.add("hidden"); // 👌 刷新也隐藏按钮
+        authToggle.classList.add("hidden");
         who.innerText=user.name;
         devBadge.classList.toggle("hidden",!user.dev);
         uploadCard.classList.toggle("hidden",!user.dev);
@@ -209,6 +257,7 @@ function loadUser(){
     renderAll();
 }
 
+// 上传作品
 function upload(){
     let f=file.files[0];if(!f)return alert("请选择文件");
     let r=new FileReader();
@@ -226,30 +275,59 @@ function upload(){
     r.readAsDataURL(f);
 }
 
+// 渲染所有作品列表（首页、社区、排行）
 function renderAll(){
     let list=JSON.parse(localStorage.projects||"[]");
+    let keyword = search.value.toLowerCase();
+    let filtered = list.filter(p => p.name.toLowerCase().includes(keyword));
+
+    // 首页推荐
     recommendGrid.innerHTML="";
-    list.filter(p=>p.rec).forEach((p,i)=>{
+    filtered.filter(p=>p.rec).forEach((p,i)=>{
         let d=document.createElement("div");
         d.className="project-card";
         d.innerHTML=`<div class="project-cover">⭐</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author}</div></div>`;
         d.onclick=()=>open(i);
         recommendGrid.appendChild(d);
     });
+
+    // 首页最新
     listEl.innerHTML="";
-    list.forEach((p,i)=>{
+    filtered.forEach((p,i)=>{
         let d=document.createElement("div");
         d.className="project-card";
         d.innerHTML=`<div class="project-cover">🎮</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | ${p.time}</div>${user?.dev?`<button class="btn btn-warning" onclick="setRec(${i})">${p.rec?"取消推荐":"设为首页"}</button>`:""}</div>`;
         d.onclick=e=>!e.target.closest(".btn")&&open(i);
         listEl.appendChild(d);
     });
+
+    // 作品社区
+    communityList.innerHTML="";
+    filtered.forEach((p,i)=>{
+        let d=document.createElement("div");
+        d.className="project-card";
+        d.innerHTML=`<div class="project-cover">🎨</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | 👍${p.likes}</div></div>`;
+        d.onclick=()=>open(i);
+        communityList.appendChild(d);
+    });
+
+    // 热度排行（按点赞降序）
+    rankList.innerHTML="";
+    [...filtered].sort((a,b)=>b.likes-a.likes).forEach((p,i)=>{
+        let d=document.createElement("div");
+        d.className="project-card";
+        d.innerHTML=`<div class="project-cover">📈</div><div class="project-info"><div class="project-title">${p.name}</div><div class="project-meta">${p.author} | 👍${p.likes}</div></div>`;
+        d.onclick=()=>open(i);
+        rankList.appendChild(d);
+    });
 }
 
+// 设置推荐
 function setRec(i){
     let p=JSON.parse(localStorage.projects);p[i].rec=!p[i].rec;localStorage.projects=JSON.stringify(p);renderAll();
 }
 
+// 打开作品预览
 let cur;
 function open(i){
     cur=i;runModal.classList.remove("hidden");
@@ -261,13 +339,24 @@ function open(i){
     }).then(r=>r.text()).then(id=>{player.src=`https://turbowarp.org/${id}`});
 }
 
+// 关闭预览
 function closeModal(){runModal.classList.add("hidden");player.src=""}
-function likeProject(){let p=JSON.parse(localStorage.projects);p[cur].likes++;localStorage.projects=JSON.stringify(p);alert("点赞成功")}
+
+// 点赞
+function likeProject(){let p=JSON.parse(localStorage.projects);p[cur].likes++;localStorage.projects=JSON.stringify(p);alert("点赞成功");renderAll()}
+
+// 分享
 function shareProject(){alert("分享链接："+location.href)}
+
+// 下载
 function downloadProject(){let a=document.createElement("a");a.href=JSON.parse(localStorage.projects)[cur].data;a.download="project.sb3";a.click()}
+
+// 评论
 function postComment(){if(!user)return alert("请先登录");let t=commentInput.value.trim();if(!t)return;let p=JSON.parse(localStorage.projects);p[cur].cmt.push({u:user.name,t});localStorage.projects=JSON.stringify(p);commentInput.value="";renderComment()}
 function renderComment(){let c=JSON.parse(localStorage.projects)[cur].cmt;commentList.innerHTML=c.map(i=>`<div class="comment-item"><div class="comment-author">${i.u}</div><div class="comment-text">${i.t}</div></div>`).join("")}
-function signIn(){if(!user)return alert("请登录");let d=new Date().toLocaleDateString();if(localStorage.lastSignIn==d)return alert("今日已签到");localStorage.lastSignIn=d;alert("签到成功！")}
+
+// 签到
+function signIn(){if(!user)return alert("请登录");let d=new Date().toLocaleDateString();if(localStorage.lastSignIn==d)return alert("今日已签到");localStorage.lastSignIn=d;alert("签到成功！");checkSignIn()}
 function checkSignIn(){if(localStorage.lastSignIn==new Date().toLocaleDateString())signInStatus.innerText="✅ 今日已签到"}
 </script>
 </body>
