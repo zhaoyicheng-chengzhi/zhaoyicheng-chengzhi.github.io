@@ -43,7 +43,8 @@
       color: white;
       text-decoration: none;
       font-size: 15px;
-      opacity: 0.8;
+      opacity: 0.9;
+      cursor: pointer;
     }
     .navbar .nav-links a:hover {
       opacity: 1;
@@ -251,9 +252,9 @@
     Scratch 作品分享站 | 作者：赵一诚
   </div>
   <div class="nav-links">
-    <a href="#">首页</a>
-    <a href="#">作品社区</a>
-    <a href="#">关于本站</a>
+    <a onclick="showHome()">首页</a>
+    <a onclick="showCommunity()">作品社区</a>
+    <a onclick="showAbout()">关于本站</a>
   </div>
   <button class="auth-btn" id="auth-toggle">登录 / 注册</button>
 </div>
@@ -264,7 +265,6 @@
 </div>
 
 <div class="container">
-  <!-- 登录/注册卡片 -->
   <div id="auth-card" class="card hidden">
     <h2>登录 / 注册</h2>
     <div class="form-group">
@@ -282,7 +282,6 @@
     <button class="btn btn-primary" onclick="login()">登录 / 注册</button>
   </div>
 
-  <!-- 用户信息卡片 -->
   <div id="user-card" class="card hidden">
     <div class="user-info">
       <div class="name">欢迎回来，<span id="current-user"></span></div>
@@ -291,7 +290,6 @@
     <button class="btn btn-outline" onclick="logout()">退出登录</button>
   </div>
 
-  <!-- 上传卡片（仅开发者可见） -->
   <div id="upload-card" class="card hidden">
     <h2>上传 Scratch 作品 (.sb3)</h2>
     <div class="form-group">
@@ -301,7 +299,6 @@
     <button class="btn btn-success" onclick="uploadProject()">上传并发布</button>
   </div>
 
-  <!-- 作品广场 -->
   <div class="card">
     <h2>作品广场</h2>
     <div class="projects-grid" id="projects-grid"></div>
@@ -312,7 +309,6 @@
   © 2025 Scratch 作品分享站 | 设计者：赵一诚 | 保留所有权利
 </div>
 
-<!-- 运行弹窗 -->
 <div id="run-modal" class="modal hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="closeModal()">×</button>
@@ -331,6 +327,18 @@
     document.getElementById("auth-toggle").addEventListener("click", toggleAuth);
   };
 
+  function showHome() {
+    alert("当前已经在首页");
+  }
+
+  function showCommunity() {
+    alert("欢迎进入作品社区");
+  }
+
+  function showAbout() {
+    alert("Scratch 作品分享站\n作者：赵一诚\n支持上传、运行、分享 .sb3 文件");
+  }
+
   function toggleAuth() {
     document.getElementById("auth-card").classList.toggle("hidden");
   }
@@ -339,15 +347,21 @@
     const u = document.getElementById("username").value.trim();
     const p = document.getElementById("password").value.trim();
     const code = document.getElementById("invite-code").value.trim();
-    if (!u || !p) { alert("请输入用户名和密码"); return; }
+    if (!u || !p) {
+      alert("请输入用户名和密码");
+      return;
+    }
     user = {
       username: u,
       isDev: code === SECRET_INVITE
     };
     localStorage.setItem("scratchUser", JSON.stringify(user));
     alert("登录成功");
+    
+    // 登录后自动关闭登录框 —— 你要的功能
+    document.getElementById("auth-card").classList.add("hidden");
+    
     loadUser();
-    toggleAuth();
   }
 
   function logout() {
@@ -376,7 +390,6 @@
         devBadge.classList.add("hidden");
       }
     } else {
-      authCard.classList.add("hidden");
       userCard.classList.add("hidden");
       uploadCard.classList.add("hidden");
     }
@@ -384,9 +397,15 @@
 
   function uploadProject() {
     const fileInput = document.getElementById("sb3-file");
-    if (!fileInput.files[0]) { alert("请选择 .sb3 文件"); return; }
+    if (!fileInput.files[0]) {
+      alert("请选择 .sb3 文件");
+      return;
+    }
     const file = fileInput.files[0];
-    if (!file.name.endsWith(".sb3")) { alert("只能上传 .sb3 文件"); return; }
+    if (!file.name.endsWith(".sb3")) {
+      alert("只能上传 .sb3 文件");
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -428,8 +447,19 @@
     const projects = JSON.parse(localStorage.getItem("projects")) || [];
     const proj = projects[index];
     document.getElementById("modal-title").innerText = proj.name;
-    const iframe = document.getElementById("scratch-iframe");
-    iframe.src = `https://turbowarp.org/embed?${proj.data}`;
+
+    const blob = fetch(proj.data).then(res => res.blob());
+    const form = new FormData();
+    blob.then(b => {
+      form.append("file", b, "project.sb3");
+      fetch("https://projects.turbowarp.org/", {
+        method: "POST",
+        body: form
+      }).then(res => res.text()).then(id => {
+        document.getElementById("scratch-iframe").src = `https://turbowarp.org/${id}?fullscreen`;
+      });
+    });
+
     document.getElementById("run-modal").classList.remove("hidden");
   }
 
