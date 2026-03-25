@@ -69,7 +69,6 @@
         body.theme-blue{background:linear-gradient(to bottom,#f0f8ff,#e6f7ff)}
         body.theme-pink{background:linear-gradient(to bottom,#fff0f5,#fdf2f8)}
         body.theme-green{background:linear-gradient(to bottom,#f0fff4,#e6fffa)}
-        /* 页面区块默认隐藏，切换时显示 */
         .page{display:none}
         .page.active{display:block}
     </style>
@@ -91,7 +90,7 @@
             <button class="theme-btn theme-green" onclick="setTheme('theme-green')"></button>
         </div>
     </div>
-    <button class="auth-btn" id="authToggle">登录/注册</button>
+    <button class="auth-btn" id="authToggle" onclick="toggleAuth()">登录/注册</button>
 </div>
 
 <div class="hero">
@@ -103,14 +102,12 @@
     <div class="notice" id="notice">公告：欢迎来到作品分享站，文明上传，禁止违规内容。</div>
     <div class="search"><input type="text" id="search" placeholder="搜索作品名称..." oninput="renderAll()"></div>
 
-    <!-- 签到卡片 -->
     <div class="card sign-in-card" id="signInCard">
         <h2>每日签到</h2>
         <button class="btn btn-success" onclick="signIn()">👋 今日签到</button>
         <div class="tip" id="signInStatus"></div>
     </div>
 
-    <!-- 登录注册卡片 -->
     <div id="authCard" class="card hidden">
         <h2>登录 / 注册</h2>
         <div class="form-group"><label>用户名</label><input id="username"></div>
@@ -119,7 +116,6 @@
         <button class="btn btn-primary" onclick="login()">登录/注册</button>
     </div>
 
-    <!-- 用户信息卡片 -->
     <div id="userCard" class="card hidden">
         <div class="user-info">
             <div class="name">欢迎，<span id="who"></span></div>
@@ -128,7 +124,6 @@
         <button class="btn btn-outline" onclick="logout()">退出登录</button>
     </div>
 
-    <!-- 上传卡片 -->
     <div id="uploadCard" class="card hidden">
         <h2>📤 上传作品 (.sb3)</h2>
         <div class="form-group"><label>选择文件</label><input type="file" id="file" accept=".sb3"></div>
@@ -137,24 +132,19 @@
         <button class="btn btn-success" onclick="upload()">上传发布</button>
     </div>
 
-    <!-- 👇 4个页面区块：首页、社区、排行、关于 -->
-    <!-- 1. 首页 -->
     <div id="page-home" class="page active">
         <div class="card"><h2>🌟 首页推荐作品（开发者精选）</h2><div class="projects-grid" id="recommendGrid"></div></div>
         <div class="card"><h2>🔥 最新上传作品</h2><div class="projects-grid" id="list"></div></div>
     </div>
 
-    <!-- 2. 作品社区 -->
     <div id="page-community" class="page">
         <div class="card"><h2>🎨 作品社区 · 全部作品</h2><div class="projects-grid" id="communityList"></div></div>
     </div>
 
-    <!-- 3. 热度排行 -->
     <div id="page-rank" class="page">
         <div class="card"><h2>📈 热度排行 · 点赞最多</h2><div class="projects-grid" id="rankList"></div></div>
     </div>
 
-    <!-- 4. 关于本站 -->
     <div id="page-about" class="page">
         <div class="card">
             <h2>ℹ️ 关于本站</h2>
@@ -168,7 +158,6 @@
 
 <div class="footer">©2025 赵一诚 | 总访问 <span id="pv">0</span></div>
 
-<!-- 运行弹窗 -->
 <div class="modal hidden" id="runModal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal()">×</button>
@@ -199,27 +188,23 @@ window.onload = () => {
     checkSignIn();
 };
 
-// 主题切换
 function setTheme(c){document.body.className=c}
-
-// PV统计
 function countPV(){localStorage.pv=+(localStorage.pv||0)+1;pv.innerText=localStorage.pv}
 
-// ✅ 页面切换核心函数
+// ✅ 新增：切换登录卡片显示/隐藏
+function toggleAuth() {
+    authCard.classList.toggle("hidden");
+}
+
 function switchPage(page){
-    // 隐藏所有页面
     document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-    // 显示目标页面
     document.getElementById(`page-${page}`).classList.add('active');
-    // 导航高亮
     document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
     document.getElementById(`nav-${page}`).classList.add('active');
     currentPage = page;
-    // 切换后重新渲染作品列表
     renderAll();
 }
 
-// 登录成功后隐藏登录按钮
 function login(){
     let u=username.value.trim(),p=pwd.value.trim(),c=code.value.trim();
     if(!u||!p)return alert("请输入账号密码");
@@ -231,7 +216,6 @@ function login(){
     loadUser();
 }
 
-// 退出登录后显示登录按钮
 function logout(){
     user=null;
     localStorage.removeItem("scratchUser");
@@ -239,7 +223,6 @@ function logout(){
     loadUser();
 }
 
-// 加载用户状态
 function loadUser(){
     user=JSON.parse(localStorage.scratchUser||"null");
     if(user){
@@ -257,7 +240,6 @@ function loadUser(){
     renderAll();
 }
 
-// 上传作品
 function upload(){
     let f=file.files[0];if(!f)return alert("请选择文件");
     let r=new FileReader();
@@ -275,13 +257,11 @@ function upload(){
     r.readAsDataURL(f);
 }
 
-// 渲染所有作品列表（首页、社区、排行）
 function renderAll(){
     let list=JSON.parse(localStorage.projects||"[]");
     let keyword = search.value.toLowerCase();
     let filtered = list.filter(p => p.name.toLowerCase().includes(keyword));
 
-    // 首页推荐
     recommendGrid.innerHTML="";
     filtered.filter(p=>p.rec).forEach((p,i)=>{
         let d=document.createElement("div");
@@ -291,7 +271,6 @@ function renderAll(){
         recommendGrid.appendChild(d);
     });
 
-    // 首页最新
     listEl.innerHTML="";
     filtered.forEach((p,i)=>{
         let d=document.createElement("div");
@@ -301,7 +280,6 @@ function renderAll(){
         listEl.appendChild(d);
     });
 
-    // 作品社区
     communityList.innerHTML="";
     filtered.forEach((p,i)=>{
         let d=document.createElement("div");
@@ -311,7 +289,6 @@ function renderAll(){
         communityList.appendChild(d);
     });
 
-    // 热度排行（按点赞降序）
     rankList.innerHTML="";
     [...filtered].sort((a,b)=>b.likes-a.likes).forEach((p,i)=>{
         let d=document.createElement("div");
@@ -322,12 +299,10 @@ function renderAll(){
     });
 }
 
-// 设置推荐
 function setRec(i){
     let p=JSON.parse(localStorage.projects);p[i].rec=!p[i].rec;localStorage.projects=JSON.stringify(p);renderAll();
 }
 
-// 打开作品预览
 let cur;
 function open(i){
     cur=i;runModal.classList.remove("hidden");
@@ -339,23 +314,12 @@ function open(i){
     }).then(r=>r.text()).then(id=>{player.src=`https://turbowarp.org/${id}`});
 }
 
-// 关闭预览
 function closeModal(){runModal.classList.add("hidden");player.src=""}
-
-// 点赞
 function likeProject(){let p=JSON.parse(localStorage.projects);p[cur].likes++;localStorage.projects=JSON.stringify(p);alert("点赞成功");renderAll()}
-
-// 分享
 function shareProject(){alert("分享链接："+location.href)}
-
-// 下载
 function downloadProject(){let a=document.createElement("a");a.href=JSON.parse(localStorage.projects)[cur].data;a.download="project.sb3";a.click()}
-
-// 评论
 function postComment(){if(!user)return alert("请先登录");let t=commentInput.value.trim();if(!t)return;let p=JSON.parse(localStorage.projects);p[cur].cmt.push({u:user.name,t});localStorage.projects=JSON.stringify(p);commentInput.value="";renderComment()}
 function renderComment(){let c=JSON.parse(localStorage.projects)[cur].cmt;commentList.innerHTML=c.map(i=>`<div class="comment-item"><div class="comment-author">${i.u}</div><div class="comment-text">${i.t}</div></div>`).join("")}
-
-// 签到
 function signIn(){if(!user)return alert("请登录");let d=new Date().toLocaleDateString();if(localStorage.lastSignIn==d)return alert("今日已签到");localStorage.lastSignIn=d;alert("签到成功！");checkSignIn()}
 function checkSignIn(){if(localStorage.lastSignIn==new Date().toLocaleDateString())signInStatus.innerText="✅ 今日已签到"}
 </script>
