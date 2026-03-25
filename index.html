@@ -1,465 +1,443 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch 作品分享站</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f7;
-            color: #1d1d1f;
-        }
-
-        /* 顶部导航栏 */
-        .navbar {
-            background-color: #000;
-            color: white;
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .navbar .logo img {
-            width: 32px;
-            height: 32px;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 24px;
-        }
-
-        .navbar .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-size: 15px;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .navbar .nav-links a:hover {
-            opacity: 1;
-        }
-
-        .navbar .auth-btn {
-            background-color: #5e5ce6;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .navbar .auth-btn:hover {
-            background-color: #4a48d1;
-        }
-
-        /* 主容器 */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-
-        /* 英雄区 */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 24px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .hero h1 {
-            font-size: 36px;
-            margin-bottom: 12px;
-        }
-
-        .hero p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
-
-        /* 卡片样式 */
-        .card {
-            background-color: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #1d1d1f;
-        }
-
-        /* 表单样式 */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            color: #6e6e73;
-            margin-bottom: 6px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e5e5ea;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #5e5ce6;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn-primary {
-            background-color: #5e5ce6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #4a48d1;
-        }
-
-        .btn-success {
-            background-color: #34c759;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #2fbb53;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: #5e5ce6;
-            border: 1px solid #5e5ce6;
-        }
-
-        .btn-outline:hover {
-            background-color: #f5f5ff;
-        }
-
-        /* 隐藏类 */
-        .hidden {
-            display: none;
-        }
-
-        /* 用户信息 */
-        .user-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .user-info .name {
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .user-info .dev-badge {
-            background-color: #ff9500;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-
-        /* 作品广场 */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .project-card {
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .project-card .cover {
-            height: 160px;
-            background-color: #e5e5ea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #86868b;
-        }
-
-        .project-card .info {
-            padding: 16px;
-        }
-
-        .project-card .title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .project-card .author {
-            font-size: 13px;
-            color: #86868b;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scratch 作品分享站 - 作者：赵一诚</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    body {
+      background: #f5f7fa;
+      color: #1d1d1f;
+    }
+    .navbar {
+      background: #000;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .navbar .logo img {
+      width: 32px;
+      height: 32px;
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 15px;
+      opacity: 0.8;
+    }
+    .navbar .nav-links a:hover {
+      opacity: 1;
+    }
+    .navbar .auth-btn {
+      background: #5e5ce6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .navbar .auth-btn:hover {
+      background: #4a48d1;
+    }
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 24px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .hero h1 {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+    }
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e5e5ea;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #5e5ce6;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #5e5ce6;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #4a48d1;
+    }
+    .btn-success {
+      background: #34c759;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #2fbb53;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #5e5ce6;
+      border: 1px solid #5e5ce6;
+    }
+    .btn-outline:hover {
+      background: #f5f5ff;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .user-info .name {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .dev-badge {
+      background: #ff9500;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .project-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+    }
+    .project-card .cover {
+      height: 160px;
+      background: #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #86868b;
+    }
+    .project-card .info {
+      padding: 16px;
+    }
+    .project-card .title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .project-card .author {
+      font-size: 13px;
+      color: #86868b;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 900px;
+      padding: 20px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .scratch-iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <div class="navbar">
-        <div class="logo">
-            <img src="https://scratch.mit.edu/favicon.ico" alt="Scratch">
-            Scratch 作品分享站
-        </div>
-        <div class="nav-links">
-            <a href="#">首页</a>
-            <a href="#">作品社区</a>
-            <a href="#">免费课程</a>
-            <a href="#">关于我们</a>
-        </div>
-        <button class="auth-btn" id="auth-toggle">登录 / 注册</button>
+
+<div class="navbar">
+  <div class="logo">
+    <img src="https://scratch.mit.edu/favicon.ico" alt="Scratch">
+    Scratch 作品分享站 | 作者：赵一诚
+  </div>
+  <div class="nav-links">
+    <a href="#">首页</a>
+    <a href="#">作品社区</a>
+    <a href="#">关于本站</a>
+  </div>
+  <button class="auth-btn" id="auth-toggle">登录 / 注册</button>
+</div>
+
+<div class="hero">
+  <h1>分享你的创意，运行你的 Scratch 作品</h1>
+  <p>本网站由 赵一诚 独立开发制作</p>
+</div>
+
+<div class="container">
+  <!-- 登录/注册卡片 -->
+  <div id="auth-card" class="card hidden">
+    <h2>登录 / 注册</h2>
+    <div class="form-group">
+      <label>用户名</label>
+      <input type="text" id="username" placeholder="请输入用户名">
     </div>
-
-    <!-- 英雄区 -->
-    <div class="hero">
-        <h1>分享你的创意，运行你的 Scratch 作品</h1>
-        <p>上传、展示、在线运行你的 Scratch 项目，和小伙伴一起创作</p>
+    <div class="form-group">
+      <label>密码</label>
+      <input type="password" id="password" placeholder="请输入密码">
     </div>
-
-    <div class="container">
-        <!-- 登录/注册卡片 -->
-        <div id="auth-card" class="card hidden">
-            <h2>登录 / 注册</h2>
-            <div class="form-group">
-                <label>用户名</label>
-                <input type="text" id="username" placeholder="请输入你的用户名">
-            </div>
-            <div class="form-group">
-                <label>密码</label>
-                <input type="password" id="password" placeholder="请输入你的密码">
-            </div>
-            <div class="form-group">
-                <label>邀请码（可选，用于开发者权限）</label>
-                <input type="text" id="invite-code" placeholder="请输入邀请码">
-            </div>
-            <button class="btn btn-primary" onclick="login()">登录 / 注册</button>
-        </div>
-
-        <!-- 用户信息卡片 -->
-        <div id="user-card" class="card hidden">
-            <div class="user-info">
-                <div class="name">欢迎回来，<span id="current-user"></span></div>
-                <div id="dev-badge" class="dev-badge hidden">开发者</div>
-            </div>
-            <button class="btn btn-outline" onclick="logout()">退出登录</button>
-        </div>
-
-        <!-- 上传卡片（仅开发者可见） -->
-        <div id="upload-card" class="card hidden">
-            <h2>上传 Scratch 作品 (.sb3)</h2>
-            <div class="form-group">
-                <label>选择文件</label>
-                <input type="file" id="sb3-file" accept=".sb3">
-            </div>
-            <button class="btn btn-success" onclick="upload()">上传并发布</button>
-        </div>
-
-        <!-- 作品广场 -->
-        <div class="card">
-            <h2>作品广场</h2>
-            <div class="projects-grid" id="projects-grid">
-                <!-- 示例作品 -->
-                <div class="project-card">
-                    <div class="cover">🎮 游戏封面</div>
-                    <div class="info">
-                        <div class="title">示例游戏作品</div>
-                        <div class="author">作者：系统示例</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="form-group">
+      <label>邀请码（可选，开发者权限）</label>
+      <input type="text" id="invite-code" placeholder="请输入邀请码">
     </div>
+    <button class="btn btn-primary" onclick="login()">登录 / 注册</button>
+  </div>
 
-    <script>
-        let user = null;
-        const SECRET_INVITE_CODE = "zhaoyichengzuishuai"; // 只在代码里，页面看不到
+  <!-- 用户信息卡片 -->
+  <div id="user-card" class="card hidden">
+    <div class="user-info">
+      <div class="name">欢迎回来，<span id="current-user"></span></div>
+      <div id="dev-badge" class="dev-badge hidden">开发者</div>
+    </div>
+    <button class="btn btn-outline" onclick="logout()">退出登录</button>
+  </div>
 
-        // 初始化
-        window.onload = function() {
-            loadUser();
-            renderProjects();
-            document.getElementById("auth-toggle").addEventListener("click", toggleAuthCard);
-        };
+  <!-- 上传卡片（仅开发者可见） -->
+  <div id="upload-card" class="card hidden">
+    <h2>上传 Scratch 作品 (.sb3)</h2>
+    <div class="form-group">
+      <label>选择文件</label>
+      <input type="file" id="sb3-file" accept=".sb3">
+    </div>
+    <button class="btn btn-success" onclick="uploadProject()">上传并发布</button>
+  </div>
 
-        // 切换登录卡片显示
-        function toggleAuthCard() {
-            const authCard = document.getElementById("auth-card");
-            authCard.classList.toggle("hidden");
-        }
+  <!-- 作品广场 -->
+  <div class="card">
+    <h2>作品广场</h2>
+    <div class="projects-grid" id="projects-grid"></div>
+  </div>
+</div>
 
-        // 登录/注册
-        function login() {
-            const username = document.getElementById("username").value.trim();
-            const password = document.getElementById("password").value.trim();
-            const inviteCode = document.getElementById("invite-code").value.trim();
+<div class="footer">
+  © 2025 Scratch 作品分享站 | 设计者：赵一诚 | 保留所有权利
+</div>
 
-            if (!username || !password) {
-                alert("请输入用户名和密码！");
-                return;
-            }
+<!-- 运行弹窗 -->
+<div id="run-modal" class="modal hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h3 id="modal-title"></h3>
+    <iframe id="scratch-iframe" class="scratch-iframe"></iframe>
+  </div>
+</div>
 
-            user = {
-                username: username,
-                isDev: inviteCode === SECRET_INVITE_CODE
-            };
+<script>
+  let user = null;
+  const SECRET_INVITE = "zhaoyichengzuishuai";
 
-            localStorage.setItem("scratchUser", JSON.stringify(user));
-            alert("登录成功！");
-            loadUser();
-            toggleAuthCard(); // 关闭登录框
-        }
+  window.onload = function() {
+    loadUser();
+    renderProjects();
+    document.getElementById("auth-toggle").addEventListener("click", toggleAuth);
+  };
 
-        // 退出登录
-        function logout() {
-            user = null;
-            localStorage.removeItem("scratchUser");
-            loadUser();
-        }
+  function toggleAuth() {
+    document.getElementById("auth-card").classList.toggle("hidden");
+  }
 
-        // 加载用户状态
-        function loadUser() {
-            user = JSON.parse(localStorage.getItem("scratchUser")) || null;
-            const authCard = document.getElementById("auth-card");
-            const userCard = document.getElementById("user-card");
-            const uploadCard = document.getElementById("upload-card");
-            const devBadge = document.getElementById("dev-badge");
-            const currentUser = document.getElementById("current-user");
+  function login() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    const code = document.getElementById("invite-code").value.trim();
+    if (!u || !p) { alert("请输入用户名和密码"); return; }
+    user = {
+      username: u,
+      isDev: code === SECRET_INVITE
+    };
+    localStorage.setItem("scratchUser", JSON.stringify(user));
+    alert("登录成功");
+    loadUser();
+    toggleAuth();
+  }
 
-            if (user) {
-                authCard.classList.add("hidden");
-                userCard.classList.remove("hidden");
-                currentUser.innerText = user.username;
-                if (user.isDev) {
-                    uploadCard.classList.remove("hidden");
-                    devBadge.classList.remove("hidden");
-                } else {
-                    uploadCard.classList.add("hidden");
-                    devBadge.classList.add("hidden");
-                }
-            } else {
-                authCard.classList.add("hidden");
-                userCard.classList.add("hidden");
-                uploadCard.classList.add("hidden");
-            }
-        }
+  function logout() {
+    user = null;
+    localStorage.removeItem("scratchUser");
+    loadUser();
+  }
 
-        // 上传作品
-        function upload() {
-            const fileInput = document.getElementById("sb3-file");
-            if (fileInput.files.length === 0) {
-                alert("请选择 .sb3 文件！");
-                return;
-            }
+  function loadUser() {
+    user = JSON.parse(localStorage.getItem("scratchUser")) || null;
+    const authCard = document.getElementById("auth-card");
+    const userCard = document.getElementById("user-card");
+    const uploadCard = document.getElementById("upload-card");
+    const devBadge = document.getElementById("dev-badge");
+    const currentUser = document.getElementById("current-user");
 
-            const file = fileInput.files[0];
-            if (!file.name.endsWith(".sb3")) {
-                alert("只能上传 .sb3 格式的 Scratch 作品！");
-                return;
-            }
+    if (user) {
+      authCard.classList.add("hidden");
+      userCard.classList.remove("hidden");
+      currentUser.innerText = user.username;
+      if (user.isDev) {
+        uploadCard.classList.remove("hidden");
+        devBadge.classList.remove("hidden");
+      } else {
+        uploadCard.classList.add("hidden");
+        devBadge.classList.add("hidden");
+      }
+    } else {
+      authCard.classList.add("hidden");
+      userCard.classList.add("hidden");
+      uploadCard.classList.add("hidden");
+    }
+  }
 
-            const projects = JSON.parse(localStorage.getItem("scratchProjects")) || [];
-            projects.push({
-                name: file.name.replace(".sb3", ""),
-                author: user.username,
-                uploadTime: new Date().toLocaleString()
-            });
+  function uploadProject() {
+    const fileInput = document.getElementById("sb3-file");
+    if (!fileInput.files[0]) { alert("请选择 .sb3 文件"); return; }
+    const file = fileInput.files[0];
+    if (!file.name.endsWith(".sb3")) { alert("只能上传 .sb3 文件"); return; }
 
-            localStorage.setItem("scratchProjects", JSON.stringify(projects));
-            alert("作品上传成功！");
-            renderProjects();
-            fileInput.value = ""; // 清空文件选择
-        }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const projects = JSON.parse(localStorage.getItem("projects")) || [];
+      projects.push({
+        name: file.name.replace(".sb3", ""),
+        author: user.username,
+        data: e.target.result,
+        time: new Date().toLocaleString()
+      });
+      localStorage.setItem("projects", JSON.stringify(projects));
+      alert("上传成功！");
+      renderProjects();
+      fileInput.value = "";
+    };
+    reader.readAsDataURL(file);
+  }
 
-        // 渲染作品列表
-        function renderProjects() {
-            const grid = document.getElementById("projects-grid");
-            const projects = JSON.parse(localStorage.getItem("scratchProjects")) || [];
-            
-            // 清空原有内容（保留示例）
-            grid.innerHTML = `
-                <div class="project-card">
-                    <div class="cover">🎮 游戏封面</div>
-                    <div class="info">
-                        <div class="title">示例游戏作品</div>
-                        <div class="author">作者：系统示例</div>
-                    </div>
-                </div>
-            `;
+  function renderProjects() {
+    const grid = document.getElementById("projects-grid");
+    const projects = JSON.parse(localStorage.getItem("projects")) || [];
+    grid.innerHTML = "";
+    projects.forEach((proj, idx) => {
+      const card = document.createElement("div");
+      card.className = "project-card";
+      card.innerHTML = `
+        <div class="cover">🎮 ${proj.name}</div>
+        <div class="info">
+          <div class="title">${proj.name}</div>
+          <div class="author">作者：${proj.author} | ${proj.time}</div>
+        </div>
+      `;
+      card.onclick = () => openModal(idx);
+      grid.appendChild(card);
+    });
+  }
 
-            projects.forEach(project => {
-                const card = document.createElement("div");
-                card.className = "project-card";
-                card.innerHTML = `
-                    <div class="cover">🎨 作品封面</div>
-                    <div class="info">
-                        <div class="title">${project.name}</div>
-                        <div class="author">作者：${project.author} | 上传于：${project.uploadTime}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-    </script>
-</body>
-</html>
-            });
-        }
-    </script>
+  function openModal(index) {
+    const projects = JSON.parse(localStorage.getItem("projects")) || [];
+    const proj = projects[index];
+    document.getElementById("modal-title").innerText = proj.name;
+    const iframe = document.getElementById("scratch-iframe");
+    iframe.src = `https://turbowarp.org/embed?${proj.data}`;
+    document.getElementById("run-modal").classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById("run-modal").classList.add("hidden");
+    document.getElementById("scratch-iframe").src = "";
+  }
+</script>
+
 </body>
 </html>
