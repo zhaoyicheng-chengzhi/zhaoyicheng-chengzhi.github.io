@@ -3,394 +3,664 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scratch作品分享站</title>
+    <title>Scratch作品分享站 - 赵一诚开发</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family: "Microsoft YaHei",sans-serif}
-        /* 导航栏 - 全局固定，仅保留核心菜单 */
-        .navbar{
-            position: fixed;top:0;left:0;width:100%;
-            background:#000;color:#fff;
-            padding:15px 30px;
-            display:flex;justify-content:space-between;align-items:center;
-            z-index:999;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
         }
-        .nav-menu{display:flex;gap:25px;align-items:center;}
-        .nav-menu a{
-            color:#fff;text-decoration:none;
-            font-size:16px;cursor:pointer;
-            padding:5px 0;
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #000;
+            color: #fff;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 9999;
         }
-        .nav-menu a.active{border-bottom:2px solid #5e5ce6;}
-        .theme-box{display:flex;gap:8px;}
-        .theme{width:18px;height:18px;border-radius:50%;cursor:pointer;}
-        .theme.blue{background:#5e5ce6;}
-        .theme.pink{background:#ff2d55;}
-        .theme.green{background:#34c759;}
-        .login-btn{
-            background:#5e5ce6;color:#fff;
-            border:none;padding:8px 15px;
-            border-radius:6px;cursor:pointer;
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
         }
-        /* 主内容区 - 适配固定导航栏 */
-        .container{
-            margin-top:70px;
-            padding:20px;
-            max-width:1200px;
-            margin-left:auto;margin-right:auto;
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 8px 0;
+            opacity: 0.8;
         }
-        /* 页面模块 - 独立页面效果 */
-        .page{display:none;}
-        .page.active{display:block;}
-        /* 卡片样式 */
-        .card{
-            background:#fff;border-radius:12px;
-            padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom:20px;
+
+        .nav-menu a.active {
+            opacity: 1;
+            border-bottom: 2px solid #5e5ce6;
+            font-weight: bold;
         }
-        .card h2{margin-bottom:15px;color:#333;}
-        /* 作品网格 */
-        .project-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-            gap:15px;
+
+        .auth-btn {
+            background: #5e5ce6;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
         }
-        .project-item{
-            background:#fff;border-radius:10px;
-            overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);
-            cursor:pointer;transition:0.2s;
+
+        /* 主内容区 */
+        .main {
+            margin-top: 60px;
+            padding: 30px 40px;
+            background: #f5f7fa;
+            min-height: calc(100vh - 60px);
         }
-        .project-item:hover{transform:translateY(-3px);}
-        .project-cover{
-            height:140px;background:#f0f0f0;
-            display:flex;align-items:center;justify-content:center;
-            font-size:20px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .project-info{padding:12px;}
-        .project-title{font-size:15px;font-weight:bold;margin-bottom:5px;}
-        .project-desc{font-size:12px;color:#666;}
-        /* 按钮 */
-        .btn{
-            padding:10px;border:none;border-radius:6px;
-            cursor:pointer;margin-top:10px;
-            width:100%;
+
+        /* 页面模块 */
+        .page {
+            display: none;
         }
-        .btn-primary{background:#5e5ce6;color:#fff;}
-        .btn-success{background:#34c759;color:#fff;}
-        .btn-warning{background:#ff9500;color:#fff;}
+
+        .page.active {
+            display: block;
+        }
+
+        /* 卡片 */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
         /* 表单 */
-        .form-item{margin-bottom:15px;}
-        .form-item label{display:block;margin-bottom:5px;font-size:14px;}
-        .form-item input,.form-item select{
-            width:100%;padding:10px;
-            border:1px solid #ddd;border-radius:6px;
+        .form-group {
+            margin-bottom: 18px;
         }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .error {
+            color: #ff3b30;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* 按钮 */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #5e5ce6;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #34c759;
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: #ff9500;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        /* 作品网格 */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .project-cover {
+            height: 140px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .project-info {
+            padding: 15px;
+        }
+
+        .project-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .project-meta {
+            font-size: 13px;
+            color: #666;
+        }
+
         /* 弹窗 */
-        .modal{
-            position:fixed;top:0;left:0;width:100%;height:100%;
-            background:rgba(0,0,0,0.7);display:none;
-            align-items:center;justify-content:center;z-index:1000;
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
         }
-        .modal-content{
-            background:#fff;width:90%;max-width:800px;
-            padding:20px;border-radius:12px;
-            position:relative;
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            padding: 25px;
+            position: relative;
         }
-        .close{
-            position:absolute;top:15px;right:15px;
-            font-size:20px;cursor:pointer;
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
         }
-        .scratch-iframe{width:100%;height:500px;border:none;border-radius:8px;}
+
+        .scratch-player {
+            width: 100%;
+            height: 550px;
+            border: none;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btns .btn {
+            flex: 1;
+        }
+
         /* 工具类 */
-        .hidden{display:none!important;}
-        .error{color:red;font-size:12px;margin-top:5px;display:none;}
+        .hidden {
+            display: none !important;
+        }
+
+        .user-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .dev-tag {
+            background: #ff9500;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
 
-<!-- 固定顶部导航栏（全局唯一，无多余元素） -->
+<!-- 导航栏 -->
 <div class="navbar">
     <div class="logo"><b>Scratch作品站</b></div>
     <div class="nav-menu">
-        <a class="nav-link active" onclick="changePage('home')">首页</a>
-        <a class="nav-link" onclick="changePage('community')">作品社区</a>
-        <a class="nav-link" onclick="changePage('rank')">热度排行</a>
-        <a class="nav-link" onclick="changePage('about')">关于本站</a>
-        <div class="theme-box">
-            <div class="theme blue" onclick="setTheme('blue')"></div>
-            <div class="theme pink" onclick="setTheme('pink')"></div>
-            <div class="theme green" onclick="setTheme('green')"></div>
-        </div>
+        <a class="nav-link active" data-page="home">首页</a>
+        <a class="nav-link" data-page="community">作品社区</a>
+        <a class="nav-link" data-page="rank">热度排行</a>
+        <a class="nav-link" data-page="about">关于本站</a>
     </div>
-    <button class="login-btn" id="loginBtn" onclick="showLogin()">登录/注册</button>
+    <button class="auth-btn" id="authBtn">登录/注册</button>
 </div>
 
-<!-- 主内容容器 -->
-<div class="container">
+<!-- 主内容区 -->
+<div class="main">
+    <div class="container">
+        <!-- 1. 首页 -->
+        <div class="page active" id="page-home">
+            <!-- 登录/注册 -->
+            <div class="card" id="loginCard">
+                <h2>账号登录 / 注册</h2>
+                <div class="form-group">
+                    <label>用户名 *</label>
+                    <input id="username" placeholder="请输入用户名">
+                    <div class="error" id="nameErr">用户名不能为空</div>
+                </div>
+                <div class="form-group">
+                    <label>密码 *</label>
+                    <input type="password" id="password" placeholder="请输入密码（至少6位）">
+                    <div class="error" id="pwdErr">密码不能少于6位</div>
+                </div>
+                <div class="form-group">
+                    <label>开发者邀请码（可选）</label>
+                    <input id="inviteCode" placeholder="输入邀请码解锁上传权限">
+                    <div class="error" id="codeErr">邀请码错误</div>
+                </div>
+                <button class="btn btn-primary" id="loginBtn">登录 / 注册</button>
+            </div>
 
-    <!-- 1. 首页 -->
-    <div class="page active" id="page-home">
-        <div class="card">
-            <h2>🌟 首页推荐作品</h2>
-            <div class="project-grid" id="recommendList"></div>
+            <!-- 用户信息 -->
+            <div class="card hidden" id="userCard">
+                <div class="user-bar">
+                    <div>
+                        欢迎，<span id="who"></span>
+                        <span class="dev-tag hidden" id="devTag">开发者</span>
+                    </div>
+                    <button class="btn btn-primary" style="width:auto" id="logoutBtn">退出登录</button>
+                </div>
+            </div>
+
+            <!-- 🎯 上传作品（超大超清晰，仅开发者可见） -->
+            <div class="card hidden" id="uploadCard">
+                <h2>📤 上传Scratch作品（.sb3格式）</h2>
+                <div class="form-group">
+                    <label>1. 选择作品文件</label>
+                    <input type="file" id="projectFile" accept=".sb3">
+                </div>
+                <div class="form-group">
+                    <label>2. 选择作品分类</label>
+                    <select id="projectCate">
+                        <option>游戏</option>
+                        <option>动画</option>
+                        <option>工具</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" id="uploadBtn">3. 点击上传并发布</button>
+            </div>
+
+            <!-- 首页推荐 -->
+            <div class="card">
+                <h2>🌟 首页推荐作品</h2>
+                <div class="project-grid" id="recommendList"></div>
+            </div>
+
+            <!-- 最新作品 -->
+            <div class="card">
+                <h2>🔥 最新上传作品</h2>
+                <div class="project-grid" id="newList"></div>
+            </div>
+
+            <div class="footer">© 2025 Scratch作品站 | 开发者：赵一诚</div>
         </div>
-        <div class="card">
-            <h2>🔥 最新上传作品</h2>
-            <div class="project-grid" id="newList"></div>
+
+        <!-- 2. 作品社区 -->
+        <div class="page" id="page-community">
+            <div class="card">
+                <h2>🎨 作品社区 - 全部作品</h2>
+                <div class="project-grid" id="allList"></div>
+            </div>
+        </div>
+
+        <!-- 3. 热度排行 -->
+        <div class="page" id="page-rank">
+            <div class="card">
+                <h2>📈 热度排行 - 点赞最多</h2>
+                <div class="project-grid" id="hotList"></div>
+            </div>
+        </div>
+
+        <!-- 4. 关于本站 -->
+        <div class="page" id="page-about">
+            <div class="card">
+                <h2>ℹ️ 关于本站</h2>
+                <p style="margin-bottom:15px;line-height:1.8;">Scratch作品分享站，由赵一诚独立开发。</p>
+                <p style="margin-bottom:15px;line-height:1.8;">支持上传、预览、运行、点赞、下载Scratch作品。</p>
+                <p style="line-height:1.8;">开发者邀请码：zhaoyichengzuishuai</p>
+            </div>
         </div>
     </div>
-
-    <!-- 2. 作品社区（纯独立页面） -->
-    <div class="page" id="page-community">
-        <div class="card">
-            <h2>🎨 全部作品社区</h2>
-            <div class="project-grid" id="allList"></div>
-        </div>
-    </div>
-
-    <!-- 3. 热度排行（纯独立页面） -->
-    <div class="page" id="page-rank">
-        <div class="card">
-            <h2>📈 点赞热度排行</h2>
-            <div class="project-grid" id="hotList"></div>
-        </div>
-    </div>
-
-    <!-- 4. 关于本站（纯独立页面） -->
-    <div class="page" id="page-about">
-        <div class="card">
-            <h2>ℹ️ 关于本站</h2>
-            <p>Scratch作品分享平台，支持上传、预览、点赞、推荐作品</p>
-            <p>开发者可设置首页推荐，管理作品</p>
-        </div>
-    </div>
-
-    <!-- 登录/注册卡片 -->
-    <div class="card hidden" id="loginCard">
-        <h2>登录 / 注册</h2>
-        <div class="form-item">
-            <label>用户名</label>
-            <input id="username">
-            <div class="error" id="nameErr">用户名不能为空</div>
-        </div>
-        <div class="form-item">
-            <label>密码</label>
-            <input type="password" id="password">
-            <div class="error" id="pwdErr">密码至少6位</div>
-        </div>
-        <div class="form-item">
-            <label>开发者邀请码（可选）</label>
-            <input id="inviteCode">
-        </div>
-        <button class="btn btn-primary" onclick="userLogin()">确认登录</button>
-    </div>
-
-    <!-- 上传作品卡片（仅开发者可见） -->
-    <div class="card hidden" id="uploadCard">
-        <h2>📤 上传Scratch作品</h2>
-        <div class="form-item">
-            <label>选择文件（.sb3）</label>
-            <input type="file" id="projectFile" accept=".sb3">
-        </div>
-        <div class="form-item">
-            <label>作品分类</label>
-            <select id="projectCate">
-                <option>游戏</option>
-                <option>动画</option>
-                <option>工具</option>
-                <option>其他</option>
-            </select>
-        </div>
-        <button class="btn btn-success" onclick="uploadProject()">上传发布</button>
-    </div>
-
 </div>
 
-<!-- 作品预览弹窗 -->
+<!-- 作品运行弹窗 -->
 <div class="modal" id="projectModal">
     <div class="modal-content">
-        <div class="close" onclick="closeModal()">&times;</div>
+        <button class="modal-close" id="closeModal">&times;</button>
         <h3 id="modalTitle"></h3>
-        <iframe class="scratch-iframe" id="player"></iframe>
-        <button class="btn" onclick="likeProject()">❤️ 点赞</button>
-        <button class="btn" onclick="downloadProject()">💾 下载</button>
+        <iframe class="scratch-player" id="player"></iframe>
+        <div class="modal-btns">
+            <button class="btn btn-primary" id="likeBtn">❤️ 点赞</button>
+            <button class="btn btn-primary" id="downloadBtn">💾 下载</button>
+        </div>
     </div>
 </div>
 
 <script>
-// 核心配置
-let user = null;
+// 配置
 const INVITE_CODE = "zhaoyichengzuishuai";
-let currentProject = 0;
+let user = null;
+let currentProjectIndex = 0;
 
 // 初始化
-window.onload = function(){
+window.onload = function() {
+    initPageSwitch();
     loadUser();
-    renderAllProjects();
+    renderAll();
+    bindEvents();
+};
+
+// 1. 页面切换
+function initPageSwitch() {
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${this.getAttribute('data-page')}`).classList.add('active');
+            renderAll();
+        });
+    });
 }
 
-// 1. 页面切换（真正独立页面效果）
-function changePage(pageName){
-    // 隐藏所有页面
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    // 激活目标页面
-    document.getElementById(`page-${pageName}`).classList.add('active');
-    // 导航高亮
-    document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
-    event.target.classList.add('active');
+// 2. 绑定所有事件
+function bindEvents() {
+    // 登录按钮
+    document.getElementById('authBtn').addEventListener('click', () => {
+        document.getElementById('loginCard').classList.toggle('hidden');
+        clearErrors();
+    });
+
+    // 提交登录
+    document.getElementById('loginBtn').addEventListener('click', login);
+
+    // 退出登录
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+
+    // 🎯 上传作品按钮
+    document.getElementById('uploadBtn').addEventListener('click', uploadProject);
+
+    // 弹窗关闭
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+
+    // 点赞
+    document.getElementById('likeBtn').addEventListener('click', likeProject);
+
+    // 下载
+    document.getElementById('downloadBtn').addEventListener('click', downloadProject);
 }
 
-// 2. 主题切换
-function setTheme(color){
-    document.querySelector('.login-btn').style.background = 
-    color=='blue'?'#5e5ce6':color=='pink'?'#ff2d55':'#34c759';
+// 清除错误
+function clearErrors() {
+    document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
 }
 
-// 3. 登录/注册相关
-function showLogin(){
-    document.getElementById('loginCard').classList.toggle('hidden');
-}
-
-function clearErrors(){
-    document.getElementById('nameErr').style.display = 'none';
-    document.getElementById('pwdErr').style.display = 'none';
-}
-
-function userLogin(){
+// 3. 登录/注册（带完整校验）
+function login() {
     clearErrors();
-    let name = document.getElementById('username').value.trim();
-    let pwd = document.getElementById('password').value.trim();
-    let code = document.getElementById('inviteCode').value.trim();
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+    const c = document.getElementById('inviteCode').value.trim();
     let err = false;
 
-    if(!name){document.getElementById('nameErr').style.display='block';err=true;}
-    if(pwd.length<6){document.getElementById('pwdErr').style.display='block';err=true;}
-    if(err)return;
+    if(!u) { document.getElementById('nameErr').style.display = 'block'; err = true; }
+    if(p.length < 6) { document.getElementById('pwdErr').style.display = 'block'; err = true; }
+    
+    let isDev = false;
+    if(c) {
+        if(c !== INVITE_CODE) {
+            document.getElementById('codeErr').style.display = 'block';
+            err = true;
+        } else {
+            isDev = true;
+        }
+    }
 
-    // 登录成功
-    user = {
-        name:name,
-        isDev: code === INVITE_CODE
-    };
+    if(err) return;
+
+    user = { name: u, isDev: isDev };
     localStorage.user = JSON.stringify(user);
     alert('登录成功！');
     loadUser();
 }
 
-function loadUser(){
-    user = JSON.parse(localStorage.user || null);
-    if(user){
-        document.getElementById('loginBtn').classList.add('hidden');
-        document.getElementById('loginCard').classList.add('hidden');
-        if(user.isDev) document.getElementById('uploadCard').classList.remove('hidden');
-    }else{
-        document.getElementById('loginBtn').classList.remove('hidden');
-        document.getElementById('uploadCard').classList.add('hidden');
-    }
-    renderAllProjects();
+// 退出登录
+function logout() {
+    user = null;
+    localStorage.removeItem('user');
+    loadUser();
+    alert('已退出');
 }
 
-// 4. 作品上传（修复：上传立即显示）
-function uploadProject(){
-    let file = document.getElementById('projectFile').files[0];
-    if(!file){alert('请选择文件');return;}
-    if(!file.name.endsWith('.sb3')){alert('仅支持sb3格式');return;}
+// 加载用户状态
+function loadUser() {
+    user = JSON.parse(localStorage.user || 'null');
+    const authBtn = document.getElementById('authBtn');
+    const loginCard = document.getElementById('loginCard');
+    const userCard = document.getElementById('userCard');
+    const uploadCard = document.getElementById('uploadCard'); // 🎯 上传卡片
+    const devTag = document.getElementById('devTag');
+    const who = document.getElementById('who');
 
-    let reader = new FileReader();
-    reader.onload = function(e){
-        let projects = JSON.parse(localStorage.projects || '[]');
+    if(user) {
+        authBtn.classList.add('hidden');
+        loginCard.classList.add('hidden');
+        userCard.classList.remove('hidden');
+        who.innerText = user.name;
+        
+        // 🎯 开发者：显示上传卡片
+        if(user.isDev) {
+            uploadCard.classList.remove('hidden');
+            devTag.classList.remove('hidden');
+        } else {
+            uploadCard.classList.add('hidden');
+            devTag.classList.add('hidden');
+        }
+    } else {
+        authBtn.classList.remove('hidden');
+        userCard.classList.add('hidden');
+        uploadCard.classList.add('hidden'); // 🎯 未登录：隐藏上传
+        devTag.classList.add('hidden');
+    }
+    renderAll();
+}
+
+// 🎯 4. 核心：上传作品功能
+function uploadProject() {
+    const fileInput = document.getElementById('projectFile');
+    const file = fileInput.files[0];
+    
+    // 1. 检查是否选择了文件
+    if(!file) {
+        alert('请先选择一个.sb3文件！');
+        return;
+    }
+
+    // 2. 检查文件格式
+    if(!file.name.endsWith('.sb3')) {
+        alert('只能上传.sb3格式的Scratch作品！');
+        return;
+    }
+
+    // 3. 读取文件并保存
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // 获取现有作品列表
+        const projects = JSON.parse(localStorage.projects || '[]');
+        
+        // 添加新作品
         projects.unshift({
-            name: file.name.replace('.sb3',''),
+            name: file.name.replace('.sb3', ''),
             author: user.name,
-            cate: document.getElementById('projectCate').value,
+            category: document.getElementById('projectCate').value,
             url: e.target.result,
-            likes:0,
-            recommend:false,
+            likes: 0,
+            isRecommend: false,
             time: new Date().toLocaleString()
         });
+
+        // 保存到本地存储
         localStorage.projects = JSON.stringify(projects);
-        alert('上传成功！');
-        renderAllProjects();
-    }
+
+        // 4. 上传成功提示
+        alert('作品上传成功！');
+
+        // 5. 清空文件选择
+        fileInput.value = '';
+
+        // 6. 立即刷新作品列表
+        renderAll();
+    };
+
+    // 开始读取文件
     reader.readAsDataURL(file);
 }
 
-// 5. 渲染所有作品（修复核心BUG）
-function renderAllProjects(){
-    let projects = JSON.parse(localStorage.projects || '[]');
+// 5. 渲染所有作品
+function renderAll() {
+    const projects = JSON.parse(localStorage.projects || '[]');
     
     // 推荐作品
-    renderList(projects.filter(p=>p.recommend), 'recommendList');
+    renderList(projects.filter(p => p.isRecommend), 'recommendList');
+    
     // 最新作品
     renderList(projects, 'newList');
+    
     // 全部作品
     renderList(projects, 'allList');
+    
     // 热度排行
-    renderList([...projects].sort((a,b)=>b.likes-a.likes), 'hotList');
+    renderList([...projects].sort((a,b) => b.likes - a.likes), 'hotList');
 }
 
-function renderList(list, domId){
-    let box = document.getElementById(domId);
+function renderList(list, domId) {
+    const box = document.getElementById(domId);
     box.innerHTML = '';
-    list.forEach((item,index)=>{
-        let div = document.createElement('div');
-        div.className = 'project-item';
+    list.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'project-card';
         div.innerHTML = `
             <div class="project-cover">🎮</div>
             <div class="project-info">
-                <div class="project-title">${item.name}</div>
-                <div class="project-desc">${item.author} | 👍${item.likes}</div>
-                ${user?.isDev ? `<button class="btn btn-warning" onclick="setRecommend(${index})">${item.recommend?'取消推荐':'设为首页'}</button>`:''}
+                <div class="project-title">${p.name}</div>
+                <div class="project-meta">${p.author} | 👍${p.likes}</div>
+                ${user?.isDev ? `<button class="btn btn-warning" onclick="toggleRecommend(${i})">${p.isRecommend?'取消推荐':'设为首页'}</button>` : ''}
             </div>
         `;
-        div.onclick = ()=>openProject(index);
+        div.onclick = (e) => {
+            if(!e.target.closest('button')) openProject(i);
+        };
         box.appendChild(div);
     });
 }
 
-// 6. 作品推荐设置
-function setRecommend(index){
-    let projects = JSON.parse(localStorage.projects);
-    projects[index].recommend = !projects[index].recommend;
+// 6. 推荐设置
+function toggleRecommend(i) {
+    const projects = JSON.parse(localStorage.projects);
+    projects[i].isRecommend = !projects[i].isRecommend;
     localStorage.projects = JSON.stringify(projects);
-    renderAllProjects();
+    renderAll();
 }
 
-// 7. 作品预览/点赞/下载
-function openProject(index){
-    currentProject = index;
-    let projects = JSON.parse(localStorage.projects);
-    let project = projects[index];
-    document.getElementById('modalTitle').innerText = project.name;
+// 7. 作品运行/点赞/下载
+function openProject(i) {
+    currentProjectIndex = i;
+    const projects = JSON.parse(localStorage.projects);
+    const p = projects[i];
+    document.getElementById('modalTitle').innerText = p.name;
     document.getElementById('projectModal').style.display = 'flex';
-    
+
     // 加载作品
-    fetch(project.url).then(res=>res.blob()).then(blob=>{
-        let form = new FormData();
+    fetch(p.url).then(res => res.blob()).then(blob => {
+        const form = new FormData();
         form.append('file', blob, 'project.sb3');
-        return fetch('https://projects.turbowarp.org/',{method:'POST',body:form});
-    }).then(res=>res.text()).then(id=>{
+        return fetch('https://projects.turbowarp.org/', {method:'POST', body:form});
+    }).then(res => res.text()).then(id => {
         document.getElementById('player').src = `https://turbowarp.org/${id}`;
     });
 }
 
-function closeModal(){
+function closeModal() {
     document.getElementById('projectModal').style.display = 'none';
     document.getElementById('player').src = '';
 }
 
-function likeProject(){
-    let projects = JSON.parse(localStorage.projects);
-    projects[currentProject].likes++;
+function likeProject() {
+    const projects = JSON.parse(localStorage.projects);
+    projects[currentProjectIndex].likes++;
     localStorage.projects = JSON.stringify(projects);
     alert('点赞成功！');
-    renderAllProjects();
+    renderAll();
 }
 
-function downloadProject(){
-    let projects = JSON.parse(localStorage.projects);
-    let a = document.createElement('a');
-    a.href = projects[currentProject].url;
-    a.download = projects[currentProject].name+'.sb3';
+function downloadProject() {
+    const projects = JSON.parse(localStorage.projects);
+    const a = document.createElement('a');
+    a.href = projects[currentProjectIndex].url;
+    a.download = projects[currentProjectIndex].name + '.sb3';
     a.click();
 }
 </script>
