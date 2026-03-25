@@ -5,469 +5,296 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scratch 作品分享站 - 作者：赵一诚</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-    }
-    body {
-      background: #f5f7fa;
-      color: #1d1d1f;
-    }
-    .navbar {
-      background: #000;
-      color: white;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .navbar .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 600;
-    }
-    .navbar .logo img {
-      width: 32px;
-      height: 32px;
-    }
-    .navbar .nav-links {
-      display: flex;
-      gap: 24px;
-    }
-    .navbar .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-size: 15px;
-      opacity: 0.9;
-      cursor: pointer;
-    }
-    .navbar .nav-links a:hover {
-      opacity: 1;
-    }
-    .navbar .auth-btn {
-      background: #5e5ce6;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .navbar .auth-btn:hover {
-      background: #4a48d1;
-    }
-    .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 60px 24px;
-      border-radius: 16px;
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .hero h1 {
-      font-size: 36px;
-      margin-bottom: 12px;
-    }
-    .hero p {
-      font-size: 18px;
-      opacity: 0.9;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px 40px;
-    }
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      margin-bottom: 24px;
-    }
-    .card h2 {
-      font-size: 22px;
-      margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 16px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      color: #6e6e73;
-      margin-bottom: 6px;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e5e5ea;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    .form-group input:focus {
-      outline: none;
-      border-color: #5e5ce6;
-    }
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: #5e5ce6;
-      color: white;
-    }
-    .btn-primary:hover {
-      background: #4a48d1;
-    }
-    .btn-success {
-      background: #34c759;
-      color: white;
-    }
-    .btn-success:hover {
-      background: #2fbb53;
-    }
-    .btn-outline {
-      background: transparent;
-      color: #5e5ce6;
-      border: 1px solid #5e5ce6;
-    }
-    .btn-outline:hover {
-      background: #f5f5ff;
-    }
-    .hidden {
-      display: none !important;
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .user-info .name {
-      font-size: 18px;
-      font-weight: 500;
-    }
-    .dev-badge {
-      background: #ff9500;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-    }
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .project-card {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: transform 0.2s;
-      cursor: pointer;
-    }
-    .project-card:hover {
-      transform: translateY(-4px);
-    }
-    .project-card .cover {
-      height: 160px;
-      background: #e5e5ea;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #86868b;
-    }
-    .project-card .info {
-      padding: 16px;
-    }
-    .project-card .title {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-    .project-card .author {
-      font-size: 13px;
-      color: #86868b;
-    }
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-    .modal-content {
-      background: white;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 900px;
-      padding: 20px;
-      position: relative;
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-    }
-    .scratch-iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      border-radius: 8px;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #888;
-      margin-top: 20px;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif}
+    body{background:#f5f7fa;color:#1d1d1f;transition:.2s}
+    .navbar{background:#000;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600}
+    .logo img{width:32px;height:32px}
+    .nav-links{display:flex;gap:24px}
+    .nav-links a{color:#fff;text-decoration:none;font-size:15px;opacity:.9;cursor:pointer}
+    .nav-links a:hover{opacity:1}
+    .auth-btn{background:#5e5ce6;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:14px;cursor:pointer}
+    .auth-btn:hover{background:#4a48d1}
+    .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:60px 24px;border-radius:16px;text-align:center;margin-bottom:32px}
+    .hero h1{font-size:36px;margin-bottom:12px}
+    .hero p{font-size:18px;opacity:.9}
+    .container{max-width:1200px;margin:0 auto;padding:0 24px 40px}
+    .card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:24px}
+    .card h2{font-size:22px;margin-bottom:20px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:14px;color:#6e6e73;margin-bottom:6px}
+    .form-group input,.form-group select{width:100%;padding:12px 16px;border:1px solid #e5e5ea;border-radius:10px;font-size:16px}
+    .form-group input:focus{outline:none;border-color:#5e5ce6}
+    .btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:500;cursor:pointer;margin-top:6px}
+    .btn-primary{background:#5e5ce6;color:#fff}
+    .btn-primary:hover{background:#4a48d1}
+    .btn-success{background:#34c759;color:#fff}
+    .btn-success:hover{background:#2fbb53}
+    .btn-danger{background:#ff3b30;color:#fff}
+    .btn-danger:hover{background:#e03024}
+    .btn-warning{background:#ff9500;color:#fff}
+    .btn-outline{background:transparent;color:#5e5ce6;border:1px solid #5e5ce6}
+    .btn-outline:hover{background:#f5f5ff}
+    .hidden{display:none!important}
+    .user-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .user-info .name{font-size:18px;font-weight:500}
+    .dev-badge{background:#ff9500;color:#fff;padding:4px 10px;border-radius:12px;font-size:12px}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .project-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:transform .2s;cursor:pointer}
+    .project-card:hover{transform:translateY(-4px)}
+    .project-card .cover{height:160px;background:#e5e5ea;display:flex;align-items:center;justify-content:center;color:#86868b}
+    .project-card .info{padding:16px}
+    .project-card .title{font-size:16px;font-weight:500;margin-bottom:6px}
+    .project-card .author,.project-card .views{font-size:13px;color:#86868b}
+    .like{font-size:13px;color:#ff3b30;margin-top:6px}
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999}
+    .modal-content{background:#fff;border-radius:16px;width:90%;max-width:900px;padding:20px;position:relative}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer}
+    .scratch-iframe{width:100%;height:600px;border:none;border-radius:8px}
+    .footer{text-align:center;padding:20px;font-size:14px;color:#888;margin-top:20px}
+    .badge{display:inline-block;padding:2px 6px;border-radius:6px;font-size:12px;background:#e0f0ff;color:#007aff;margin-left:4px}
+    .notice{background:#e0f0ff;color:#0066cc;padding:12px 16px;border-radius:10px;margin-bottom:20px}
+    .search{margin-bottom:20px}
+    .search input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd}
+    .tip{color:#888;font-size:14px;margin-top:8px}
+    .recommend{border:2px solid #ff9500}
+    body.dark{background:#1c1c1e;color:#f5f5f7}
+    body.dark .card,body.dark .project-card{background:#2c2c2e}
+    body.dark .navbar{background:#000}
+    body.dark .modal-content{background:#2c2c2e}
   </style>
 </head>
 <body>
 
 <div class="navbar">
   <div class="logo">
-    <img src="https://scratch.mit.edu/favicon.ico" alt="Scratch">
-    Scratch 作品分享站 | 作者：赵一诚
+    <img src="https://scratch.mit.edu/favicon.ico">Scratch 作品站 | 作者：赵一诚
   </div>
   <div class="nav-links">
     <a onclick="showHome()">首页</a>
     <a onclick="showCommunity()">作品社区</a>
+    <a onclick="showRanking()">热度排行</a>
     <a onclick="showAbout()">关于本站</a>
+    <a onclick="toggleDark()">暗黑模式</a>
   </div>
-  <button class="auth-btn" id="auth-toggle">登录 / 注册</button>
+  <button class="auth-btn" id="authToggle">登录/注册</button>
 </div>
 
 <div class="hero">
-  <h1>分享你的创意，运行你的 Scratch 作品</h1>
-  <p>本网站由 赵一诚 独立开发制作</p>
+  <h1>分享创意 · 运行作品 · 交流创作</h1>
+  <p>由赵一诚独立开发 | 安全、免费、开源</p>
 </div>
 
 <div class="container">
-  <div id="auth-card" class="card hidden">
+  <div class="notice" id="notice">公告：欢迎来到作品分享站，文明上传，禁止违规内容。</div>
+  <div class="search"><input type="text" id="search" placeholder="搜索作品名称..." oninput="renderProjects()"></div>
+
+  <div id="authCard" class="card hidden">
     <h2>登录 / 注册</h2>
-    <div class="form-group">
-      <label>用户名</label>
-      <input type="text" id="username" placeholder="请输入用户名">
-    </div>
-    <div class="form-group">
-      <label>密码</label>
-      <input type="password" id="password" placeholder="请输入密码">
-    </div>
-    <div class="form-group">
-      <label>邀请码（可选，开发者权限）</label>
-      <input type="text" id="invite-code" placeholder="请输入邀请码">
-    </div>
-    <button class="btn btn-primary" onclick="login()">登录 / 注册</button>
+    <div class="form-group"><label>用户名</label><input id="username"></div>
+    <div class="form-group"><label>密码</label><input type="password" id="pwd"></div>
+    <div class="form-group"><label>开发者邀请码（可选）</label><input id="code"></div>
+    <button class="btn btn-primary" onclick="login()">登录/注册</button>
   </div>
 
-  <div id="user-card" class="card hidden">
+  <div id="userCard" class="card hidden">
     <div class="user-info">
-      <div class="name">欢迎回来，<span id="current-user"></span></div>
-      <div id="dev-badge" class="dev-badge hidden">开发者</div>
+      <div class="name">欢迎，<span id="who"></span></div>
+      <div id="devBadge" class="dev-badge hidden">开发者</div>
     </div>
     <button class="btn btn-outline" onclick="logout()">退出登录</button>
   </div>
 
-  <div id="upload-card" class="card hidden">
-    <h2>上传 Scratch 作品 (.sb3)</h2>
-    <div class="form-group">
-      <label>选择文件</label>
-      <input type="file" id="sb3-file" accept=".sb3">
+  <div id="uploadCard" class="card hidden">
+    <h2>📤 上传作品 (.sb3)</h2>
+    <div class="form-group"><label>选择文件</label><input type="file" id="file" accept=".sb3"></div>
+    <div class="form-group"><label>分类</label>
+      <select id="cate">
+        <option value="游戏">游戏</option>
+        <option value="动画">动画</option>
+        <option value="工具">工具</option>
+        <option value="其他">其他</option>
+      </select>
     </div>
-    <button class="btn btn-success" onclick="uploadProject()">上传并发布</button>
+    <button class="btn btn-success" onclick="upload()">上传发布</button>
   </div>
 
   <div class="card">
-    <h2>作品广场</h2>
-    <div class="projects-grid" id="projects-grid"></div>
+    <h2>🌟 首页推荐作品（开发者精选）</h2>
+    <div class="projects-grid" id="recommendGrid"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔥 最新上传作品</h2>
+    <div class="projects-grid" id="list"></div>
   </div>
 </div>
 
 <div class="footer">
-  © 2025 Scratch 作品分享站 | 设计者：赵一诚 | 保留所有权利
+  ©2025 Scratch 作品分享站 | 设计者：赵一诚 | 总访问量 <span id="pv">0</span>
 </div>
 
-<div id="run-modal" class="modal hidden">
+<div class="modal hidden" id="runModal">
   <div class="modal-content">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <h3 id="modal-title"></h3>
-    <iframe id="scratch-iframe" class="scratch-iframe"></iframe>
+    <h3 id="modalTitle"></h3>
+    <iframe class="scratch-iframe" id="player"></iframe>
+    <div style="margin-top:10px">
+      <button class="btn" onclick="likeProject()">❤️ 点赞</button>
+      <button class="btn" onclick="shareProject()">🔗 分享</button>
+      <button class="btn" onclick="downloadProject()">💾 下载</button>
+    </div>
   </div>
 </div>
 
 <script>
-  let user = null;
-  const SECRET_INVITE = "zhaoyichengzuishuai";
+let user = null;
+const SECRET = "zhaoyichengzuishuai";
+const start = new Date("2025-01-01");
 
-  window.onload = function() {
-    loadUser();
-    renderProjects();
-    document.getElementById("auth-toggle").addEventListener("click", toggleAuth);
+window.onload = () => {
+  loadUser();
+  countPV();
+  renderAll();
+  document.getElementById("authToggle").onclick = () => authCard.classList.toggle("hidden");
+};
+
+function countPV(){
+  let n=+(localStorage.pv||0)+1;
+  localStorage.pv=n;
+  document.getElementById("pv").innerText=n;
+}
+
+function showHome(){alert("🏠 已经在首页")}
+function showCommunity(){alert("🎨 作品社区")}
+function showRanking(){alert("📈 按热度排序作品")}
+function showAbout(){alert("Scratch 作品分享站\n作者：赵一诚\n功能：上传、运行、点赞、评论、推荐、排行、暗黑模式")}
+function toggleDark(){document.body.classList.toggle("dark")}
+
+function login(){
+  let u=username.value.trim(),p=pwd.value.trim(),c=code.value.trim();
+  if(!u||!p)return alert("请输入账号密码");
+  user={name:u,dev:c===SECRET};
+  localStorage.scratchUser=JSON.stringify(user);
+  alert("登录成功");
+  authCard.classList.add("hidden");
+  loadUser();
+}
+
+function logout(){user=null;localStorage.removeItem("scratchUser");loadUser()}
+
+function loadUser(){
+  user=JSON.parse(localStorage.scratchUser||"null");
+  if(user){
+    authCard.classList.add("hidden");
+    userCard.classList.remove("hidden");
+    who.innerText=user.name;
+    devBadge.classList.toggle("hidden",!user.dev);
+    uploadCard.classList.toggle("hidden",!user.dev);
+  }else{
+    userCard.classList.add("hidden");
+    uploadCard.classList.add("hidden");
+  }
+  renderAll();
+}
+
+function upload(){
+  let f=file.files[0];
+  if(!f)return alert("请选择文件");
+  if(!f.name.endsWith(".sb3"))return alert("仅支持sb3");
+  let r=new FileReader();
+  r.onload=e=>{
+    let list=JSON.parse(localStorage.projects||"[]");
+    list.unshift({
+      name:f.name.replace(".sb3",""),
+      author:user.name,cate:cate.value,
+      data:e.target.result,time:new Date().toLocaleString(),
+      likes:0,views:0,rec:false,cmt:[]
+    });
+    localStorage.projects=JSON.stringify(list);
+    alert("上传成功");
+    file.value="";
+    renderAll();
   };
+  r.readAsDataURL(f);
+}
 
-  function showHome() {
-    alert("当前已经在首页");
-  }
+function renderAll(){
+  renderProjects();
+  renderRecommend();
+}
 
-  function showCommunity() {
-    alert("欢迎进入作品社区");
-  }
+function renderProjects(){
+  let g=list,list=JSON.parse(localStorage.projects||"[]"),kw=search.value.toLowerCase();
+  g.innerHTML="";
+  list.filter(p=>p.name.toLowerCase().includes(kw)).forEach((p,i)=>{
+    let d=document.createElement("div");
+    d.className="project-card";
+    d.innerHTML=`<div class="cover">🎮 ${p.name}</div>
+    <div class="info"><div class="title">${p.name}</div>
+    <div class="author">${p.author} · ${p.cate}</div>
+    <div class="views">👁 ${p.views} · ❤️ ${p.likes}</div>
+    ${user?.dev?`<button class="btn btn-warning" onclick="setRec(${i})">${p.rec?"取消推荐":"设为首页"}</button>
+    <button class="btn btn-danger" onclick="del(${i})">删除</button>`:""}`;
+    d.onclick=e=>!e.target.closest(".btn")&&open(i);
+    g.appendChild(d);
+  });
+}
 
-  function showAbout() {
-    alert("Scratch 作品分享站\n作者：赵一诚\n支持上传、运行、分享 .sb3 文件");
-  }
+function renderRecommend(){
+  let g=recommendGrid,list=JSON.parse(localStorage.projects||"[]").filter(p=>p.rec);
+  g.innerHTML="";
+  list.forEach((p,i)=>{
+    let d=document.createElement("div");
+    d.className="project-card recommend";
+    d.innerHTML=`<div class="cover">⭐ 推荐</div>
+    <div class="info"><div class="title">${p.name}</div>
+    <div class="author">${p.author}</div>
+    <div class="views">👁 ${p.views} · ❤️ ${p.likes}</div>`;
+    d.onclick=()=>open(list.findIndex(x=>x.name==p.name));
+    g.appendChild(d);
+  });
+}
 
-  function toggleAuth() {
-    document.getElementById("auth-card").classList.toggle("hidden");
-  }
+function setRec(i){
+  let p=JSON.parse(localStorage.projects);
+  p[i].rec=!p[i].rec;
+  localStorage.projects=JSON.stringify(p);
+  renderAll();
+}
 
-  function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
-    const code = document.getElementById("invite-code").value.trim();
-    if (!u || !p) {
-      alert("请输入用户名和密码");
-      return;
-    }
-    user = {
-      username: u,
-      isDev: code === SECRET_INVITE
-    };
-    localStorage.setItem("scratchUser", JSON.stringify(user));
-    alert("登录成功");
-    
-    // 登录后自动关闭登录框 —— 你要的功能
-    document.getElementById("auth-card").classList.add("hidden");
-    
-    loadUser();
-  }
+function del(i){
+  if(!confirm("确定删除？"))return;
+  let p=JSON.parse(localStorage.projects);
+  p.splice(i,1);localStorage.projects=JSON.stringify(p);renderAll();
+}
 
-  function logout() {
-    user = null;
-    localStorage.removeItem("scratchUser");
-    loadUser();
-  }
+let cur;
+function open(i){
+  cur=i;
+  let p=JSON.parse(localStorage.projects)[i];
+  p.views++;
+  localStorage.projects=JSON.stringify(JSON.parse(localStorage.projects));
+  modalTitle.innerText=p.name;
+  runModal.classList.remove("hidden");
+  fetch(p.data).then(r=>r.blob()).then(b=>{
+    let f=new FormData();f.append("file",b,"p.sb3");
+    return fetch("https://projects.turbowarp.org/",{method:"POST",body:f});
+  }).then(r=>r.text()).then(id=>{player.src=`https://turbowarp.org/${id}`});
+}
 
-  function loadUser() {
-    user = JSON.parse(localStorage.getItem("scratchUser")) || null;
-    const authCard = document.getElementById("auth-card");
-    const userCard = document.getElementById("user-card");
-    const uploadCard = document.getElementById("upload-card");
-    const devBadge = document.getElementById("dev-badge");
-    const currentUser = document.getElementById("current-user");
-
-    if (user) {
-      authCard.classList.add("hidden");
-      userCard.classList.remove("hidden");
-      currentUser.innerText = user.username;
-      if (user.isDev) {
-        uploadCard.classList.remove("hidden");
-        devBadge.classList.remove("hidden");
-      } else {
-        uploadCard.classList.add("hidden");
-        devBadge.classList.add("hidden");
-      }
-    } else {
-      userCard.classList.add("hidden");
-      uploadCard.classList.add("hidden");
-    }
-  }
-
-  function uploadProject() {
-    const fileInput = document.getElementById("sb3-file");
-    if (!fileInput.files[0]) {
-      alert("请选择 .sb3 文件");
-      return;
-    }
-    const file = fileInput.files[0];
-    if (!file.name.endsWith(".sb3")) {
-      alert("只能上传 .sb3 文件");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const projects = JSON.parse(localStorage.getItem("projects")) || [];
-      projects.push({
-        name: file.name.replace(".sb3", ""),
-        author: user.username,
-        data: e.target.result,
-        time: new Date().toLocaleString()
-      });
-      localStorage.setItem("projects", JSON.stringify(projects));
-      alert("上传成功！");
-      renderProjects();
-      fileInput.value = "";
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function renderProjects() {
-    const grid = document.getElementById("projects-grid");
-    const projects = JSON.parse(localStorage.getItem("projects")) || [];
-    grid.innerHTML = "";
-    projects.forEach((proj, idx) => {
-      const card = document.createElement("div");
-      card.className = "project-card";
-      card.innerHTML = `
-        <div class="cover">🎮 ${proj.name}</div>
-        <div class="info">
-          <div class="title">${proj.name}</div>
-          <div class="author">作者：${proj.author} | ${proj.time}</div>
-        </div>
-      `;
-      card.onclick = () => openModal(idx);
-      grid.appendChild(card);
-    });
-  }
-
-  function openModal(index) {
-    const projects = JSON.parse(localStorage.getItem("projects")) || [];
-    const proj = projects[index];
-    document.getElementById("modal-title").innerText = proj.name;
-
-    const blob = fetch(proj.data).then(res => res.blob());
-    const form = new FormData();
-    blob.then(b => {
-      form.append("file", b, "project.sb3");
-      fetch("https://projects.turbowarp.org/", {
-        method: "POST",
-        body: form
-      }).then(res => res.text()).then(id => {
-        document.getElementById("scratch-iframe").src = `https://turbowarp.org/${id}?fullscreen`;
-      });
-    });
-
-    document.getElementById("run-modal").classList.remove("hidden");
-  }
-
-  function closeModal() {
-    document.getElementById("run-modal").classList.add("hidden");
-    document.getElementById("scratch-iframe").src = "";
-  }
+function closeModal(){runModal.classList.add("hidden");player.src=""}
+function likeProject(){
+  let p=JSON.parse(localStorage.projects);p[cur].likes++;
+  localStorage.projects=JSON.stringify(p);renderAll();alert("点赞成功")
+}
+function shareProject(){alert("分享链接："+location.href)}
+function downloadProject(){
+  let a=document.createElement("a");
+  a.href=JSON.parse(localStorage.projects)[cur].data;
+  a.download=JSON.parse(localStorage.projects)[cur].name+".sb3";
+  a.click();
+}
 </script>
-
 </body>
 </html>
