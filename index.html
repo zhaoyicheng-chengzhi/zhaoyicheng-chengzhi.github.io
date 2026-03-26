@@ -417,49 +417,47 @@ const DEV_INVITE_CODE = "zhaoyichengzuishuai";
 let currentUser = null;
 let currentProjectIndex = 0;
 
-// ==============================================
-// 🎯 核心修复：全局事件委托，所有按钮点击永久有效
-// ==============================================
+// 全局事件委托
 document.addEventListener('click', function(e) {
     const target = e.target;
 
-    // 1. 登录/注册按钮（右上角）
+    // 登录/注册按钮
     if(target.id === 'authBtn') {
         document.getElementById('loginCard').classList.toggle('hidden');
         clearErrors();
     }
 
-    // 2. 提交登录/注册
+    // 提交登录
     if(target.id === 'loginBtn') {
         userLogin();
     }
 
-    // 3. 退出登录
+    // 退出登录
     if(target.id === 'logoutBtn') {
         userLogout();
     }
 
-    // 4. 上传作品
+    // 上传作品
     if(target.id === 'uploadBtn') {
         uploadProject();
     }
 
-    // 5. 关闭作品弹窗
+    // 关闭弹窗
     if(target.id === 'closeModal') {
         closeProjectModal();
     }
 
-    // 6. 点赞作品
+    // 点赞
     if(target.id === 'likeBtn') {
         likeProject();
     }
 
-    // 7. 下载作品
+    // 下载
     if(target.id === 'downloadBtn') {
         downloadProject();
     }
 
-    // 8. 页面切换导航
+    // 页面切换
     if(target.classList.contains('nav-link')) {
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
         target.classList.add('active');
@@ -476,21 +474,19 @@ window.onload = function() {
     renderAllProjects();
 };
 
-// 清除错误提示
+// 清除错误
 function clearErrors() {
     document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
 }
 
-// 清空登录表单
+// 清空表单
 function clearLoginForm() {
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
     document.getElementById('inviteCode').value = '';
 }
 
-// ==============================================
-// 用户系统：登录/注册/退出
-// ==============================================
+// 用户登录
 function userLogin() {
     clearErrors();
     const username = document.getElementById('username').value.trim();
@@ -498,7 +494,6 @@ function userLogin() {
     const inviteCode = document.getElementById('inviteCode').value.trim();
     let hasError = false;
 
-    // 基础校验
     if(!username) { 
         document.getElementById('nameErr').style.display = 'block'; 
         hasError = true; 
@@ -508,7 +503,6 @@ function userLogin() {
         hasError = true; 
     }
     
-    // 邀请码校验
     let isDev = false;
     if(inviteCode) {
         if(inviteCode !== DEV_INVITE_CODE) {
@@ -521,17 +515,13 @@ function userLogin() {
 
     if(hasError) return;
 
-    // 获取用户数据库
     const userDB = JSON.parse(localStorage.getItem('userDB') || '{}');
 
-    // 登录/注册逻辑
     if(userDB[username]) {
-        // 已注册：校验密码
         if(userDB[username].password !== password) {
             alert('密码错误！请重新输入');
             return;
         }
-        // 更新开发者状态
         if(isDev) {
             userDB[username].isDev = true;
             localStorage.setItem('userDB', JSON.stringify(userDB));
@@ -541,7 +531,6 @@ function userLogin() {
             isDev: userDB[username].isDev
         };
     } else {
-        // 未注册：创建新用户
         userDB[username] = {
             password: password,
             isDev: isDev
@@ -553,28 +542,25 @@ function userLogin() {
         };
     }
 
-    // 登录成功
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     alert('登录/注册成功！');
     clearLoginForm();
     loadUserStatus();
 }
 
-// 🎯 修复：退出登录强制重置所有状态
+// 退出登录
 function userLogout() {
     currentUser = null;
     localStorage.removeItem('currentUser');
     clearLoginForm();
-    // 强制刷新用户状态
     loadUserStatus();
     alert('已退出登录');
 }
 
-// 🎯 修复：加载用户状态，确保登录按钮正确显示
+// 加载用户状态
 function loadUserStatus() {
     currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     
-    // 获取DOM元素
     const authBtn = document.getElementById('authBtn');
     const loginCard = document.getElementById('loginCard');
     const userCard = document.getElementById('userCard');
@@ -582,7 +568,6 @@ function loadUserStatus() {
     const devTag = document.getElementById('devTag');
     const who = document.getElementById('who');
 
-    // 强制重置所有类名，避免残留
     authBtn.classList.remove('hidden');
     loginCard.classList.add('hidden');
     userCard.classList.add('hidden');
@@ -590,7 +575,6 @@ function loadUserStatus() {
     devTag.classList.add('hidden');
 
     if(currentUser) {
-        // 已登录：隐藏登录按钮，显示用户信息和上传
         authBtn.classList.add('hidden');
         userCard.classList.remove('hidden');
         uploadCard.classList.remove('hidden');
@@ -599,13 +583,10 @@ function loadUserStatus() {
             devTag.classList.remove('hidden');
         }
     }
-    // 未登录：保持初始状态，登录按钮可见
     renderAllProjects();
 }
 
-// ==============================================
-// 作品上传/渲染/权限控制
-// ==============================================
+// 上传作品
 function uploadProject() {
     if(!currentUser) {
         alert('请先登录！');
@@ -637,6 +618,7 @@ function uploadProject() {
     reader.readAsDataURL(file);
 }
 
+// 渲染作品
 function renderAllProjects() {
     const projects = JSON.parse(localStorage.getItem('projects') || '[]');
     
@@ -656,11 +638,9 @@ function renderList(list, domId) {
         let buttons = '';
         if(currentUser) {
             if(currentUser.isDev) {
-                // 开发者：推荐+删除所有
                 buttons = `<button class="btn btn-warning" onclick="toggleRecommend(${i})">${p.isRecommend?'取消推荐':'设为首页'}</button>
                           <button class="btn btn-danger" onclick="deleteProject(${i})">删除作品</button>`;
             } else if(p.author === currentUser.username) {
-                // 普通用户：仅删除自己的
                 buttons = `<button class="btn btn-danger" onclick="deleteProject(${i})">删除我的作品</button>`;
             }
         }
@@ -680,7 +660,7 @@ function renderList(list, domId) {
     });
 }
 
-// 推荐设置（仅开发者）
+// 推荐设置
 function toggleRecommend(i) {
     if(!currentUser || !currentUser.isDev) {
         alert('只有开发者能设置首页推荐！');
@@ -692,7 +672,7 @@ function toggleRecommend(i) {
     renderAllProjects();
 }
 
-// 删除作品（权限控制）
+// 删除作品
 function deleteProject(i) {
     const projects = JSON.parse(localStorage.getItem('projects'));
     const project = projects[i];
@@ -715,9 +695,7 @@ function deleteProject(i) {
     renderAllProjects();
 }
 
-// ==============================================
-// 作品预览/点赞/下载
-// ==============================================
+// 作品预览
 function openProject(i) {
     currentProjectIndex = i;
     const projects = JSON.parse(localStorage.getItem('projects'));
@@ -725,7 +703,6 @@ function openProject(i) {
     document.getElementById('modalTitle').innerText = p.name;
     document.getElementById('projectModal').style.display = 'flex';
 
-    // 稳定加载作品
     const iframe = document.getElementById('player');
     iframe.src = '';
     
@@ -749,11 +726,13 @@ function openProject(i) {
         });
 }
 
+// 关闭弹窗
 function closeProjectModal() {
     document.getElementById('projectModal').style.display = 'none';
     document.getElementById('player').src = '';
 }
 
+// 点赞
 function likeProject() {
     const projects = JSON.parse(localStorage.getItem('projects'));
     projects[currentProjectIndex].likes++;
@@ -762,6 +741,7 @@ function likeProject() {
     renderAllProjects();
 }
 
+// 下载
 function downloadProject() {
     const projects = JSON.parse(localStorage.getItem('projects'));
     const a = document.createElement('a');
