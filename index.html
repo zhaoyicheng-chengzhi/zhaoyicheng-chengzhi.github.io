@@ -737,7 +737,7 @@ function deleteProject(i) {
 }
 
 // ==============================================
-// 🎯 核心修复：作品在线运行（稳定版）
+// 🎯 核心修复：无跨域纯前端作品加载方案
 // ==============================================
 function openProject(i) {
     currentProjectIndex = i;
@@ -753,40 +753,24 @@ function openProject(i) {
     loadingTip.style.display = 'block';
     player.src = '';
 
-    // 1. 将base64转换为Blob文件
-    fetch(project.fileData)
-        .then(res => res.blob())
-        .then(blob => {
-            // 2. 校验文件合法性
-            if(blob.size < 100) {
-                throw new Error('作品文件损坏，无法加载');
-            }
-
-            // 3. 上传到TurboWarp官方API，获取可运行的项目ID
-            const formData = new FormData();
-            formData.append('file', blob, 'project.sb3');
-            
-            return fetch('https://trampoline.turbowarp.org/api/projects', {
-                method: 'POST',
-                body: formData
-            });
-        })
-        .then(res => {
-            if(!res.ok) {
-                throw new Error('作品上传到运行引擎失败');
-            }
-            return res.json();
-        })
-        .then(data => {
-            // 4. 用官方embed方式加载作品，支持绿旗、全屏、正常运行
-            loadingTip.style.display = 'none';
-            player.src = `https://turbowarp.org/${data.id}/embed?autoplay&settings-button&fullscreen-button`;
-        })
-        .catch(err => {
-            console.error('作品加载失败：', err);
-            loadingTip.innerText = `作品加载失败：${err.message}，请关闭弹窗重试`;
+    try {
+        // 直接用文件Data URL加载，无任何跨域请求，完美兼容GitHub Pages
+        loadingTip.style.display = 'none';
+        // TurboWarp官方支持直接通过url参数加载Data URL格式的sb3文件
+        player.src = `https://turbowarp.org/embed?project_url=${encodeURIComponent(project.fileData)}&autoplay&settings-button&fullscreen-button`;
+        
+        // 加载失败兜底
+        player.onerror = function() {
+            loadingTip.innerText = '作品加载失败，请关闭弹窗重试';
             loadingTip.style.color = '#ff3b30';
-        });
+            loadingTip.style.display = 'block';
+        };
+    } catch (err) {
+        console.error('作品加载失败：', err);
+        loadingTip.innerText = `作品加载失败：${err.message}，请关闭弹窗重试`;
+        loadingTip.style.color = '#ff3b30';
+        loadingTip.style.display = 'block';
+    }
 }
 
 // 关闭作品弹窗
